@@ -1,9 +1,11 @@
 import { useState } from 'react';
+import type { User } from '@supabase/supabase-js';
+import { supabase } from '../lib/supabase';
 
-type Props = { dark: boolean; onTheme: () => void };
+type Props = { dark: boolean; onTheme: () => void; user: User };
 type Language = 'English' | 'Русский' | 'Қазақша';
 
-export function SettingsView({ dark, onTheme }: Props) {
+export function SettingsView({ dark, onTheme, user }: Props) {
   const [name, setName] = useState(
     () => localStorage.getItem('smart-life-name') ?? 'Alex Morgan',
   );
@@ -36,8 +38,8 @@ export function SettingsView({ dark, onTheme }: Props) {
       </header>
 
       <section className="profile-card">
-        <img src="/assets/smart-life-logo.png" alt="Profile" />
-        <div><h2>{name}</h2><p>alex@example.com</p></div>
+        <img src={typeof user.user_metadata.avatar_url === 'string' ? user.user_metadata.avatar_url : '/assets/smart-life-logo.png'} alt="Profile" />
+        <div><h2>{name}</h2><p>{user.email}</p></div>
         <button onClick={() => setEditingName(true)} type="button">Edit</button>
       </section>
 
@@ -83,7 +85,7 @@ export function SettingsView({ dark, onTheme }: Props) {
         </div>
       </section>
 
-      <button className="sign-out-button" onClick={() => setMessage('Sign out will be available after authentication is connected')} type="button">Sign out</button>
+      <button className="sign-out-button" onClick={() => void supabase.auth.signOut()} type="button">Sign out</button>
       {financeOpen && <FinanceConnection onClose={() => setFinanceOpen(false)} />}
       {editingName && (
         <NameEditor

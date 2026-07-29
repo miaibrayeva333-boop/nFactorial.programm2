@@ -1,8 +1,7 @@
-import { useState } from 'react';
+import { FormEvent, useState } from 'react';
 import { isSupabaseConfigured, supabase } from '../lib/supabase';
 import { SupabaseSetupMessage } from './SupabaseSetupMessage';
 
-// Вход и регистрация по email + паролю. Это пример — Codex поможет улучшить (Google-вход и т.д.).
 export function Auth() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -12,59 +11,82 @@ export function Auth() {
 
   if (!isSupabaseConfigured) return <SupabaseSetupMessage />;
 
-  async function handleSubmit(e: React.FormEvent) {
-    e.preventDefault();
+  async function useGoogle() {
     setBusy(true);
     setMessage('');
-    try {
-      const fn =
-        mode === 'signup'
-          ? supabase.auth.signUp({
-              email,
-              password,
-              options: { emailRedirectTo: window.location.origin },
-            })
-          : supabase.auth.signInWithPassword({ email, password });
-      const { error } = await fn;
-      if (error) setMessage(error.message);
-      else if (mode === 'signup') setMessage('Готово! Проверь почту, если нужна подтверждалка.');
-    } catch {
-      setMessage('Что-то пошло не так. Попробуй ещё раз.');
-    } finally {
+    const { error } = await supabase.auth.signInWithOAuth({
+      provider: 'google',
+      options: {
+        redirectTo: window.location.origin,
+        queryParams: { access_type: 'offline', prompt: 'select_account' },
+      },
+    });
+    if (error) {
+      setMessage(error.message);
       setBusy(false);
     }
   }
 
+  async function submit(event: FormEvent) {
+    event.preventDefault();
+    setBusy(true);
+    setMessage('');
+    const result = mode === 'signup'
+      ? await supabase.auth.signUp({
+          email,
+          password,
+          options: { emailRedirectTo: window.location.origin },
+        })
+      : await supabase.auth.signInWithPassword({ email, password });
+    if (result.error) setMessage(result.error.message);
+    else if (mode === 'signup' && !result.data.session) {
+      setMessage('Check your email to confirm your new account.');
+    }
+    setBusy(false);
+  }
+
   return (
-    <section className="card">
-      <h2>{mode === 'signin' ? 'Вход' : 'Регистрация'}</h2>
-      <form onSubmit={handleSubmit} className="form">
-        <input
-          type="email"
-          placeholder="email"
-          value={email}
-          onChange={(e) => setEmail(e.target.value)}
-          required
-        />
-        <input
-          type="password"
-          placeholder="пароль (6+ символов)"
-          value={password}
-          onChange={(e) => setPassword(e.target.value)}
-          minLength={6}
-          required
-        />
-        <button type="submit" disabled={busy}>
-          {busy ? '…' : mode === 'signin' ? 'Войти' : 'Создать аккаунт'}
+    <main className="auth-page">
+      <section className="auth-card">
+        <img className="auth-logo" src="/assets/smart-life-logo.png" alt="Smart Life" />
+        <p className="eyebrow">WELCOME TO SMART LIFE</p>
+        <h1>{mode === 'signin' ? 'Welcome back' : 'Create your account'}</h1>
+        <p className="auth-subtitle">Your tasks, health, goals, and daily plans in one calm place.</p>
+
+        <button className="google-auth-button" disabled={busy} onClick={() => void useGoogle()} type="button">
+          <GoogleMark />
+          Continue with Google
         </button>
-      </form>
-      {message && <p className="message">{message}</p>}
-      <button
-        className="ghost"
-        onClick={() => setMode(mode === 'signin' ? 'signup' : 'signin')}
-      >
-        {mode === 'signin' ? 'Нет аккаунта? Зарегистрируйся' : 'Уже есть аккаунт? Войти'}
-      </button>
-    </section>
+        <div className="auth-divider"><span>or continue with email</span></div>
+
+        <form className="auth-form" onSubmit={submit}>
+          <label>Email address<input autoComplete="email" onChange={(event) => setEmail(event.target.value)} placeholder="you@example.com" required type="email" value={email} /></label>
+          <label>Password<input autoComplete={mode === 'signin' ? 'current-password' : 'new-password'} minLength={6} onChange={(event) => setPassword(event.target.value)} placeholder="At least 6 characters" required type="password" value={password} /></label>
+          <button className="auth-submit" disabled={busy} type="submit">
+            {busy ? 'Please wait…' : mode === 'signin' ? 'Sign in' : 'Create account'}
+          </button>
+        </form>
+
+        {message && <p className="auth-message" role="status">{message}</p>}
+        <button className="auth-switch" disabled={busy} onClick={() => {
+          setMode(mode === 'signin' ? 'signup' : 'signin');
+          setMessage('');
+        }} type="button">
+          {mode === 'signin' ? "New to Smart Life? Create an account" : 'Already have an account? Sign in'}
+        </button>
+        <small>By continuing, you agree to securely authenticate through Supabase.</small>
+      </section>
+    </main>
+  );
+}
+
+function GoogleMark() {
+  return (
+    <svg aria-hidden="true" viewBox="0 0 24 24">
+      <path fill="#4285F4" d="M22.6 12.2c0-.7-.1-1.5-.2-2.2H12v4.3h6a5.2 5.2 0 0 1-2.2 3.3v2.8h3.6c2.1-2 3.2-4.8 3.2-8.2Z" />
+      <path fill="#34A853" d="M12 23c3 0 5.5-1 7.4-2.6l-3.6-2.8c-1 .7-2.3 1.1-3.8 1.1-2.9 0-5.4-2-6.3-4.6H2v2.9A11.2 11.2 0 0 0 12 23Z" />
+      <path fill="#FBBC05" d="M5.7 14.1a6.8 6.8 0 0 1 0-4.2V7H2a11.2 11.2 0 0 0 0 10l3.7-2.9Z" />
+      <path fill="#EA4335" d="M12 5.3c1.6 0 3.1.6 4.3 1.7l3.2-3.2A10.8 10.8 0 0 0 2 7l3.7 2.9C6.6 7.2 9.1 5.3 12 5.3Z" />
+    </svg>
   );
 }
