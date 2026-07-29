@@ -18,9 +18,7 @@ export function HomePage() {
     if (tab === 'Settings') return <SettingsView dark={dark} onTheme={() => setDark(!dark)} />;
     return (
       <section className="empty-view">
-        <div className="empty-view__icon">
-          {tab === 'Calendar' ? '◫' : tab === 'Goals' ? '◎' : '☺'}
-        </div>
+        <div className="empty-view__icon">◎</div>
         <h2>{tab}</h2>
         <p>Your {tab.toLowerCase()} workspace is ready.</p>
         <button onClick={() => window.alert(`New ${tab.toLowerCase()} item editor is ready to connect.`)} type="button">Add your first item</button>
