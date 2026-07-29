@@ -48,6 +48,25 @@ export function Dashboard() {
     return Math.round(rates.reduce((sum, rate) => sum + rate, 0) / rates.length * 100);
   }, [revision, tasks]);
 
+  const dashboardGoals = useMemo(() => {
+    const saved = localStorage.getItem('smart-life-goals');
+    const goals = saved ? JSON.parse(saved) as Array<{
+      id: number;
+      title: string;
+      date: string;
+      time: string;
+      urgency: 'Low' | 'Medium' | 'Urgent';
+      progress: number;
+    }> : [];
+    const rank = (goal: typeof goals[number]) => {
+      if (goal.urgency === 'Urgent' && goal.progress === 0) return 0;
+      if (goal.urgency === 'Urgent') return 1;
+      if (goal.urgency === 'Medium') return 2;
+      return 3;
+    };
+    return goals.sort((a, b) => rank(a) - rank(b) || a.date.localeCompare(b.date)).slice(0, 3);
+  }, [revision]);
+
   return (
     <div className="dashboard">
       <header className="topbar">
@@ -104,19 +123,28 @@ export function Dashboard() {
         </div>
       </section>
 
-      <div className="wide-grid">
+      {dashboardGoals.length > 0 && (
         <section className="section">
-          <div className="section-title"><h2>Upcoming</h2><button onClick={() => setMessage('Choose Calendar in the bottom menu')} type="button">Calendar</button></div>
-          <article className="event-card">
-            <div className="date-tile"><b>29</b><small>JUL</small></div>
-            <div><h3>Weekly planning</h3><p>4:00 – 4:45 PM · Focus room</p></div><span>›</span>
-          </article>
+          <div className="section-title"><h2>Your goals <span>{dashboardGoals.length}</span></h2></div>
+          <div className="dashboard-goals">
+            {dashboardGoals.map((goal) => (
+              <article className={goal.urgency === 'Urgent' ? 'dashboard-goal urgent' : 'dashboard-goal'} key={goal.id}>
+                <div>
+                  <span>{goal.urgency}</span>
+                  <h3>{goal.title}</h3>
+                  <p>Due {new Date(`${goal.date}T${goal.time}`).toLocaleDateString('en', { month: 'short', day: 'numeric' })}</p>
+                </div>
+                <strong>{goal.progress}%</strong>
+                <div className="dashboard-goal__progress"><i style={{ width: `${goal.progress}%` }} /></div>
+              </article>
+            ))}
+          </div>
         </section>
-        <section className="productivity">
-          <div><span>WEEKLY PRODUCTIVITY</span><h2>{productivity}%</h2><p>Updates as you complete items</p></div>
-          <div className="ring" style={{ background: `conic-gradient(var(--primary) ${productivity}%, rgba(98,89,223,.15) 0)` }}><b>{productivity}</b></div>
-        </section>
-      </div>
+      )}
+      <section className="productivity">
+        <div><span>WEEKLY PRODUCTIVITY</span><h2>{productivity}%</h2><p>Updates as you complete items</p></div>
+        <div className="ring" style={{ background: `conic-gradient(var(--primary) ${productivity}%, rgba(98,89,223,.15) 0)` }}><b>{productivity}</b></div>
+      </section>
       {message && <button className="toast" onClick={() => setMessage('')} type="button">{message}<span>×</span></button>}
     </div>
   );
