@@ -1,11 +1,3 @@
-// AI-функция на бесплатном ключе Google Gemini.
-// Вызов с фронта: supabase.functions.invoke('ai', { body: { prompt, system } })
-//
-// Запуск (один раз):
-//   1) Добавь GEMINI_API_KEY в локальный .env
-//   2) Загрузи секрет:  npm run ai:secret
-//   3) Задеплой:        npm run ai:deploy
-
 const GEMINI_API_KEY = Deno.env.get('GEMINI_API_KEY');
 const MODEL = 'gemini-3.5-flash';
 
@@ -15,11 +7,7 @@ const cors = {
 };
 
 type GeminiResponse = {
-  candidates?: Array<{
-    content?: {
-      parts?: Array<{ text?: unknown }>;
-    };
-  }>;
+  candidates?: Array<{ content?: { parts?: Array<{ text?: unknown }> } }>;
 };
 
 function json(body: object, status = 200) {
@@ -31,22 +19,34 @@ function json(body: object, status = 200) {
 
 Deno.serve(async (req) => {
   if (req.method === 'OPTIONS') return new Response('ok', { headers: cors });
-  if (req.method !== 'POST') return json({ error: 'Используй POST-запрос' }, 405);
+  if (req.method !== 'POST') return json({ error: 'Use a POST request.' }, 405);
 
   try {
     if (!GEMINI_API_KEY) {
-      console.error('GEMINI_API_KEY is not configured');
-      return json({ error: 'AI пока не настроен. Попроси наставника проверить секрет.' }, 503);
+      return json({ error: 'AI is not configured yet.' }, 503);
     }
 
-    const body = (await req.json()) as { prompt?: unknown; system?: unknown };
+    const body = (await req.json()) as {
+      prompt?: unknown;
+      system?: unknown;
+      image?: unknown;
+      imageMimeType?: unknown;
+    };
     const prompt = typeof body.prompt === 'string' ? body.prompt.trim() : '';
     const system = typeof body.system === 'string' ? body.system.trim() : '';
+    const image = typeof body.image === 'string' ? body.image : '';
+    const imageMimeType = typeof body.imageMimeType === 'string' ? body.imageMimeType : '';
 
-    if (!prompt) return json({ error: 'Напиши запрос для AI.' }, 400);
+    if (!prompt) return json({ error: 'Write a prompt for AI.' }, 400);
     if (prompt.length > 10_000 || system.length > 5_000) {
-      return json({ error: 'Запрос слишком длинный. Сделай его короче.' }, 400);
+      return json({ error: 'The request is too long.' }, 400);
     }
+    if (image && (!imageMimeType.startsWith('image/') || image.length > 12_000_000)) {
+      return json({ error: 'The image is too large or has an unsupported format.' }, 400);
+    }
+
+    const parts: Array<Record<string, unknown>> = [{ text: prompt }];
+    if (image) parts.unshift({ inline_data: { mime_type: imageMimeType, data: image } });
 
     const response = await fetch(
       `https://generativelanguage.googleapis.com/v1beta/models/${MODEL}:generateContent?key=${GEMINI_API_KEY}`,
@@ -55,7 +55,7 @@ Deno.serve(async (req) => {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           systemInstruction: system ? { parts: [{ text: system }] } : undefined,
-          contents: [{ parts: [{ text: prompt }] }],
+          contents: [{ parts }],
         }),
       },
     );
@@ -63,18 +63,16 @@ Deno.serve(async (req) => {
     const data = (await response.json()) as GeminiResponse;
     if (!response.ok) {
       console.error('Gemini request failed', response.status, data);
-      return json({ error: 'AI сейчас не ответил. Попробуй ещё раз чуть позже.' }, 502);
+      return json({ error: 'AI could not respond. Please try again shortly.' }, 502);
     }
 
-    const text = data?.candidates?.[0]?.content?.parts?.[0]?.text;
+    const text = data.candidates?.[0]?.content?.parts?.[0]?.text;
     if (typeof text !== 'string' || !text.trim()) {
-      console.error('Gemini returned an empty response', data);
-      return json({ error: 'AI вернул пустой ответ. Попробуй переформулировать запрос.' }, 502);
+      return json({ error: 'AI returned an empty response.' }, 502);
     }
-
     return json({ text });
   } catch (error) {
     console.error('AI function failed', error);
-    return json({ error: 'Не получилось обратиться к AI. Попробуй ещё раз.' }, 500);
+    return json({ error: 'Could not reach AI. Please try again.' }, 500);
   }
 });

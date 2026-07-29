@@ -4,6 +4,9 @@ import type { ScannedFood } from './BarcodeScanner';
 const BarcodeScanner = lazy(() =>
   import('./BarcodeScanner').then((module) => ({ default: module.BarcodeScanner })),
 );
+const PhotoFoodScanner = lazy(() =>
+  import('./PhotoFoodScanner').then((module) => ({ default: module.PhotoFoodScanner })),
+);
 
 type Meal = 'Breakfast' | 'Lunch' | 'Dinner' | 'Snack';
 type FoodEntry = {
@@ -141,6 +144,7 @@ function FoodEditor({ onClose, onSave }: { onClose: () => void; onSave: (entry: 
   const [carbs, setCarbs] = useState('0');
   const [fat, setFat] = useState('0');
   const [scannerOpen, setScannerOpen] = useState(false);
+  const [photoScannerOpen, setPhotoScannerOpen] = useState(false);
   function applyScannedFood(food: ScannedFood) {
     setName(food.name); setCalories(String(food.calories)); setProtein(String(food.protein));
     setCarbs(String(food.carbs)); setFat(String(food.fat)); setScannerOpen(false);
@@ -157,7 +161,10 @@ function FoodEditor({ onClose, onSave }: { onClose: () => void; onSave: (entry: 
       <form className="tracker-modal food-editor" onMouseDown={(event) => event.stopPropagation()} onSubmit={submit}>
         <button className="modal-close" onClick={onClose} type="button">×</button>
         <div className="tracker-symbol orange">◉</div><h2>Add food</h2><p>Use the nutrition label or a trusted food database.</p>
-        <button className="scan-barcode-button" onClick={() => setScannerOpen(true)} type="button"><span>▥</span> Scan barcode</button>
+        <div className="food-scan-actions">
+          <button className="scan-photo-button" onClick={() => setPhotoScannerOpen(true)} type="button"><span>✦</span> Scan meal photo</button>
+          <button className="scan-barcode-button" onClick={() => setScannerOpen(true)} type="button"><span>▥</span> Scan barcode</button>
+        </div>
         <label>Meal<select value={meal} onChange={(event) => setMeal(event.target.value as Meal)}>{meals.map((item) => <option key={item}>{item}</option>)}</select></label>
         <label>Food name<input autoFocus className="amount-input" value={name} onChange={(event) => setName(event.target.value)} placeholder="e.g. Greek yogurt" /></label>
         <label>Calories<input className="amount-input" min="0" value={calories} onChange={(event) => setCalories(event.target.value)} type="number" /></label>
@@ -170,6 +177,11 @@ function FoodEditor({ onClose, onSave }: { onClose: () => void; onSave: (entry: 
         {scannerOpen && (
           <Suspense fallback={<div className="nutrition-scanner-loading">Opening camera…</div>}>
             <BarcodeScanner onClose={() => setScannerOpen(false)} onFound={applyScannedFood} />
+          </Suspense>
+        )}
+        {photoScannerOpen && (
+          <Suspense fallback={<div className="nutrition-scanner-loading">Opening photo scanner…</div>}>
+            <PhotoFoodScanner onClose={() => setPhotoScannerOpen(false)} onFound={applyScannedFood} />
           </Suspense>
         )}
       </form>

@@ -11,6 +11,17 @@ button { cursor: pointer; }
   --muted: #7b7e8e; --line: #ececf2; --primary: #6259df; --primary-soft: #ebe9ff;
   min-height: 100vh; color: var(--text); background: var(--bg); transition: .25s ease;
 }
+.food-scan-actions { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin: 14px 0 4px; }
+.food-scan-actions .scan-barcode-button { margin: 0; }
+.scan-photo-button { width: 100%; border: 0; background: linear-gradient(135deg, #ff7a9d, #e83e75); color: white; border-radius: 13px; padding: 12px; font-weight: 800; }
+.photo-food-scanner { text-align: center; }
+.photo-scan-icon { display: grid; place-items: center; width: 54px; height: 54px; margin: 0 auto 10px; border-radius: 18px; color: white; font-size: 26px; background: linear-gradient(135deg, #ff7a9d, #e83e75); }
+.meal-photo-placeholder { min-height: 210px; margin: 16px 0; border: 2px dashed #f19ab3; border-radius: 20px; background: rgba(239, 78, 125, .07); display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 7px; }
+.meal-photo-placeholder span { font-size: 42px; }
+.meal-photo-placeholder small { color: var(--muted); }
+.meal-photo-preview { width: 100%; max-height: 320px; object-fit: cover; margin: 16px 0; border-radius: 20px; }
+.photo-food-scanner > small { display: block; margin-top: 12px; color: var(--muted); line-height: 1.45; }
+@media (max-width: 430px) { .food-scan-actions { grid-template-columns: 1fr; } }
 .app.dark {
   --bg: #14151b; --surface: #202128; --soft-surface: #282930; --text: #f4f3fa;
   --muted: #a7a8b4; --line: #35363e; --primary-soft: #343052;
