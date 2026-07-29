@@ -2,12 +2,26 @@ import { FormEvent, useEffect, useRef, useState } from 'react';
 import { isSupabaseConfigured, supabase } from '../lib/supabase';
 
 type Message = { id: number; role: 'assistant' | 'user'; text: string };
-const suggestions = ['Plan my day', 'Prioritize my tasks', 'When should I take a break?'];
 const system = `You are Smart Life, a concise and friendly personal organization assistant.
-Help with planning, prioritizing, schedules, free time, breaks, habits, and unfinished tasks.
+Help with planning, prioritizing, schedules, free time, breaks, habits, emotional wellbeing, and unfinished tasks.
+For emotional support, listen without judgment, validate feelings without diagnosing, ask one gentle question at a time,
+and suggest small grounded coping steps. Do not present yourself as a therapist or replace professional care.
+If someone may be in immediate danger, encourage them to contact local emergency services or a trusted person now.
 Give practical short answers with clear next steps. Never claim to change data you cannot access.`;
 
 export function AiChat() {
+  const name = localStorage.getItem('smart-life-name') ?? 'Alex';
+  const firstName = name.trim().split(/\s+/)[0];
+  const savedMetrics = localStorage.getItem('smart-life-metrics');
+  const mood = savedMetrics
+    ? (JSON.parse(savedMetrics) as { mood?: string }).mood ?? 'unsure'
+    : 'unsure';
+  const suggestions = [
+    `I feel ${mood.toLowerCase()}—help me check in`,
+    'Help me calm down',
+    'Ask me a gentle journal question',
+    'Plan a low-stress day',
+  ];
   const [messages, setMessages] = useState<Message[]>([
     { id: 1, role: 'assistant', text: 'Hi! How can I help organize your day?' },
   ]);
@@ -60,21 +74,27 @@ export function AiChat() {
     <div className="ai-page">
       <section className="ai-chat">
         <header className="ai-chat__header">
-          <div className="ai-avatar">✦</div>
-          <div><h2>Smart Life AI</h2><p><i /> Your personal planning assistant</p></div>
+          <img className="ai-avatar mascot-avatar" src="/assets/axolotl-ai-mascot.png" alt="Friendly axolotl AI mascot" />
+          <div><h2>Axie · Smart Life AI</h2><p><i /> Planning and emotional support</p></div>
         </header>
         <div className="ai-messages">
           {messages.length === 1 && (
             <div className="ai-welcome">
-              <div className="ai-welcome__mark">✦</div>
-              <h1>How can I help with your day?</h1>
-              <p>Ask me to plan, prioritize, find free time, or organize unfinished tasks.</p>
+              <img className="ai-mascot-large" src="/assets/axolotl-ai-mascot.png" alt="Axie the axolotl" />
+              <div className="mascot-bubble">
+                <strong>Hi {firstName}! I noticed today’s mood is “{mood}.”</strong>
+                <span>Would you like to talk about how you’re feeling, or make a gentle plan for your day?</span>
+              </div>
+              <h1>What’s on your mind?</h1>
+              <p>Axie can help you reflect, calm down, plan gently, or find one manageable next step.</p>
             </div>
           )}
           {messages.map((message) => (
             message.id === 1 && messages.length === 1 ? null : (
               <div className={`chat-line ${message.role}`} key={message.id}>
-                <div className="chat-line__avatar">{message.role === 'assistant' ? '✦' : 'A'}</div>
+                {message.role === 'assistant'
+                  ? <img className="chat-line__avatar mascot-avatar" src="/assets/axolotl-ai-mascot.png" alt="" />
+                  : <div className="chat-line__avatar">{firstName.charAt(0).toUpperCase()}</div>}
                 <div className="chat-message">{message.text}</div>
               </div>
             )
