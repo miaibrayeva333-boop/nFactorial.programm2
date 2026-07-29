@@ -48,13 +48,13 @@ export function Auth() {
   return (
     <main className="auth-page">
       <section className="auth-card">
-        <img className="auth-logo" src="/assets/smart-life-logo.png" alt="Smart Life" />
-        <p className="eyebrow">WELCOME TO SMART LIFE</p>
+        <img className="auth-logo" src="/assets/smart-life-logo.png" alt="Smart Axis" />
+        <p className="eyebrow">WELCOME TO SMART AXIS</p>
         <div className="auth-mode-tabs" aria-label="Account access">
           <button className={mode === 'signin' ? 'selected' : ''} onClick={() => { setMode('signin'); setMessage(''); }} type="button">Log in</button>
           <button className={mode === 'signup' ? 'selected' : ''} onClick={() => { setMode('signup'); setMessage(''); }} type="button">Register</button>
         </div>
-        <h1>{mode === 'signin' ? 'Log in to Smart Life' : 'Create your account'}</h1>
+        <h1>{mode === 'signin' ? 'Log in to Smart Axis' : 'Create your account'}</h1>
         <p className="auth-subtitle">Your tasks, health, goals, and daily plans in one calm place.</p>
 
         <button className="google-auth-button" disabled={busy} onClick={() => void useGoogle()} type="button">
@@ -76,7 +76,7 @@ export function Auth() {
           setMode(mode === 'signin' ? 'signup' : 'signin');
           setMessage('');
         }} type="button">
-          {mode === 'signin' ? "New to Smart Life? Create an account" : 'Already have an account? Sign in'}
+          {mode === 'signin' ? "New to Smart Axis? Create an account" : 'Already have an account? Sign in'}
         </button>
         <small>By continuing, you agree to securely authenticate through Supabase.</small>
       </section>

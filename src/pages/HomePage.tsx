@@ -45,7 +45,7 @@ export function HomePage() {
     return null;
   }, [dark, session, tab]);
 
-  if (!authReady) return <div className="auth-loading"><img src="/assets/smart-life-logo.png" alt="" /><span>Opening Smart Life…</span></div>;
+  if (!authReady) return <div className="auth-loading"><img src="/assets/smart-life-logo.png" alt="" /><span>Opening Smart Axis…</span></div>;
   if (!session) return <Auth />;
 
   return (

@@ -29,7 +29,7 @@ export function TasksView() {
 
   return (
     <div className="dashboard tasks-view">
-      <header className="topbar"><div className="brand-greeting"><img className="app-logo" src="/assets/smart-life-logo.png" alt="Smart Life logo" /><div><p className="eyebrow">STAY ON TRACK</p><h1>My tasks</h1></div></div>
+      <header className="topbar"><div className="brand-greeting"><img className="app-logo" src="/assets/smart-life-logo.png" alt="Smart Axis logo" /><div><p className="eyebrow">STAY ON TRACK</p><h1>My tasks</h1></div></div>
         <button className="add-button" onClick={addTask} type="button">＋</button>
       </header>
       <div className="search"><span>⌕</span><input value={query} onChange={(event) => setQuery(event.target.value)} placeholder="Search tasks" /></div>

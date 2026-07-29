@@ -111,11 +111,11 @@ function FinanceConnection({ onClose }: { onClose: () => void }) {
       <section className="tracker-modal finance-connection" onMouseDown={(event) => event.stopPropagation()}>
         <button className="modal-close" onClick={onClose} type="button">×</button>
         <div className="finance-card">
-          <span>SMART LIFE</span><b>•••• •••• •••• 2480</b>
+          <span>SMART AXIS</span><b>•••• •••• •••• 2480</b>
           <div><small>CONNECTED FINANCES</small><strong>Secure bank sync</strong></div>
         </div>
         <h2>Track money automatically</h2>
-        <p>Connect checking, savings, or credit accounts through a secure financial-data provider. Smart Life never asks for your card number or bank password.</p>
+        <p>Connect checking, savings, or credit accounts through a secure financial-data provider. Smart Axis never asks for your card number or bank password.</p>
         <ul className="finance-benefits">
           <li><span>✓</span> Automatic transaction updates</li>
           <li><span>✓</span> Spending categories and budget totals</li>
@@ -123,7 +123,7 @@ function FinanceConnection({ onClose }: { onClose: () => void }) {
         </ul>
         <button className="connect-finance-button" onClick={() => setNotice(true)} type="button">Connect bank or credit card</button>
         {notice && <div className="finance-notice">Plaid server credentials must be configured before secure connection can open.</div>}
-        <small className="finance-privacy">Do not enter card details directly into Smart Life.</small>
+        <small className="finance-privacy">Do not enter card details directly into Smart Axis.</small>
       </section>
     </div>
   );

@@ -2,7 +2,7 @@ import { FormEvent, useEffect, useRef, useState } from 'react';
 import { isSupabaseConfigured, supabase } from '../lib/supabase';
 
 type Message = { id: number; role: 'assistant' | 'user'; text: string };
-const system = `You are Smart Life, a concise and friendly personal organization assistant.
+const system = `You are Axis, the concise and friendly Smart Axis personal organization assistant.
 Help with planning, prioritizing, schedules, free time, breaks, habits, emotional wellbeing, and unfinished tasks.
 For emotional support, listen without judgment, validate feelings without diagnosing, ask one gentle question at a time,
 and suggest small grounded coping steps. Do not present yourself as a therapist or replace professional care.
@@ -75,7 +75,7 @@ export function AiChat() {
       <section className="ai-chat">
         <header className="ai-chat__header">
           <img className="ai-avatar mascot-avatar" src="/assets/axolotl-ai-mascot.png" alt="Friendly axolotl AI mascot" />
-          <div><h2>Axie · Smart Life AI</h2><p><i /> Planning and emotional support</p></div>
+          <div><h2>Axie · Smart Axis AI</h2><p><i /> Planning and emotional support</p></div>
         </header>
         <div className="ai-messages">
           {messages.length === 1 && (
@@ -113,12 +113,12 @@ export function AiChat() {
               autoFocus
               maxLength={1000}
               onChange={(event) => setQuestion(event.target.value)}
-              placeholder="Message Smart Life..."
+              placeholder="Message Axis..."
               value={question}
             />
             <button aria-label="Send message" disabled={!question.trim() || loading} type="submit">↑</button>
           </form>
-          <small>Smart Life can make mistakes. Check important information.</small>
+          <small>Axis can make mistakes. Check important information.</small>
         </footer>
       </section>
     </div>

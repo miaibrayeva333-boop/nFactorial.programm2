@@ -86,7 +86,7 @@ export function Dashboard() {
     <div className="dashboard">
       <header className="topbar">
         <div className="brand-greeting">
-          <img className="app-logo" src="/assets/smart-life-logo.png" alt="Smart Life logo" />
+          <img className="app-logo" src="/assets/smart-life-logo.png" alt="Smart Axis logo" />
           <div>
             <p className="eyebrow">{today}</p>
             <h1>{greeting}, {firstName} <span>👋</span></h1>
