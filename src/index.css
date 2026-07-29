@@ -8,6 +8,9 @@ button { cursor: pointer; }
 .auth-page { min-height: 100vh; padding: 28px 18px; display: grid; place-items: center; background: radial-gradient(circle at 20% 10%, #e6fffa 0, transparent 28%), radial-gradient(circle at 90% 80%, #eeecff 0, transparent 30%), #f7f8fc; }
 .auth-card { width: min(100%, 430px); padding: 34px; border: 1px solid #ececf2; border-radius: 30px; background: rgba(255,255,255,.94); box-shadow: 0 28px 70px rgba(60,55,120,.13); text-align: center; }
 .auth-logo { width: 74px; height: 74px; margin-bottom: 19px; border-radius: 24px; box-shadow: 0 12px 25px rgba(68,62,175,.2); }
+.auth-mode-tabs { display: grid; grid-template-columns: 1fr 1fr; gap: 5px; margin: 18px 0 22px; padding: 5px; border-radius: 14px; background: #f0f0f6; }
+.auth-mode-tabs button { padding: 10px; border: 0; border-radius: 10px; color: #777a89; background: transparent; font-weight: 750; }
+.auth-mode-tabs button.selected { color: #5148cf; background: #fff; box-shadow: 0 4px 13px rgba(65,61,120,.11); }
 .auth-card h1 { margin-bottom: 9px; font-size: 30px; letter-spacing: -.04em; }
 .auth-subtitle { margin: 0 auto 24px; max-width: 330px; color: #777b8b; line-height: 1.5; }
 .google-auth-button { width: 100%; min-height: 50px; display: flex; align-items: center; justify-content: center; gap: 11px; border: 1px solid #dddfe7; border-radius: 14px; color: #272934; background: #fff; font-weight: 700; }

@@ -50,7 +50,11 @@ export function Auth() {
       <section className="auth-card">
         <img className="auth-logo" src="/assets/smart-life-logo.png" alt="Smart Life" />
         <p className="eyebrow">WELCOME TO SMART LIFE</p>
-        <h1>{mode === 'signin' ? 'Welcome back' : 'Create your account'}</h1>
+        <div className="auth-mode-tabs" aria-label="Account access">
+          <button className={mode === 'signin' ? 'selected' : ''} onClick={() => { setMode('signin'); setMessage(''); }} type="button">Log in</button>
+          <button className={mode === 'signup' ? 'selected' : ''} onClick={() => { setMode('signup'); setMessage(''); }} type="button">Register</button>
+        </div>
+        <h1>{mode === 'signin' ? 'Log in to Smart Life' : 'Create your account'}</h1>
         <p className="auth-subtitle">Your tasks, health, goals, and daily plans in one calm place.</p>
 
         <button className="google-auth-button" disabled={busy} onClick={() => void useGoogle()} type="button">
