@@ -5,6 +5,7 @@ import { TasksView } from '../components/TasksView';
 import { SettingsView } from '../components/SettingsView';
 import { AiChat } from '../components/AiChat';
 import { CalendarView } from '../components/CalendarView';
+import { GoalsView } from '../components/GoalsView';
 
 export function HomePage() {
   const [tab, setTab] = useState<AppTab>('Dashboard');
@@ -14,16 +15,10 @@ export function HomePage() {
     if (tab === 'Tasks') return <TasksView />;
     if (tab === 'Dashboard') return <Dashboard />;
     if (tab === 'Calendar') return <CalendarView />;
+    if (tab === 'Goals') return <GoalsView />;
     if (tab === 'AI') return <AiChat />;
     if (tab === 'Settings') return <SettingsView dark={dark} onTheme={() => setDark(!dark)} />;
-    return (
-      <section className="empty-view">
-        <div className="empty-view__icon">◎</div>
-        <h2>{tab}</h2>
-        <p>Your {tab.toLowerCase()} workspace is ready.</p>
-        <button onClick={() => window.alert(`New ${tab.toLowerCase()} item editor is ready to connect.`)} type="button">Add your first item</button>
-      </section>
-    );
+    return null;
   }, [dark, tab]);
 
   return (
