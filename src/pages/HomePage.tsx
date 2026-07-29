@@ -1,13 +1,31 @@
+import { useMemo, useState } from 'react';
+import { Dashboard } from '../components/Dashboard';
+import { BottomNavigation, type AppTab } from '../components/BottomNavigation';
+import { TasksView } from '../components/TasksView';
+
 export function HomePage() {
-  return (
-    <main className="container">
-      <section className="hello">
-        <h1>Привет! 🚀</h1>
-        <p>Это твой проект. Пока тут пусто — самое интересное впереди.</p>
-        <p className="hello__hint">
-          Открой Codex и опиши свою идею — этот экран станет твоим приложением.
-        </p>
+  const [tab, setTab] = useState<AppTab>('Dashboard');
+  const [dark, setDark] = useState(false);
+
+  const content = useMemo(() => {
+    if (tab === 'Tasks') return <TasksView />;
+    if (tab === 'Dashboard') return <Dashboard dark={dark} onTheme={() => setDark(!dark)} />;
+    return (
+      <section className="empty-view">
+        <div className="empty-view__icon">
+          {tab === 'Calendar' ? '◫' : tab === 'Goals' ? '◎' : '☺'}
+        </div>
+        <h2>{tab}</h2>
+        <p>Your {tab.toLowerCase()} workspace is ready.</p>
+        <button type="button">Add your first item</button>
       </section>
-    </main>
+    );
+  }, [dark, tab]);
+
+  return (
+    <div className={dark ? 'app dark' : 'app'}>
+      <main className="app__content">{content}</main>
+      <BottomNavigation active={tab} onChange={setTab} />
+    </div>
   );
 }
