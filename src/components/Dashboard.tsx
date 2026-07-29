@@ -7,9 +7,7 @@ const initialTasks = [
   { title: 'Review monthly budget', meta: 'Finance · 6:00 PM', done: false, color: 'orange', priority: 'low' },
 ];
 
-type Props = { dark: boolean; onTheme: () => void };
-
-export function Dashboard({ dark, onTheme }: Props) {
+export function Dashboard() {
   const [tasks, setTasks] = useState(initialTasks);
   const [message, setMessage] = useState('');
   const hour = new Date().getHours();
@@ -28,9 +26,6 @@ export function Dashboard({ dark, onTheme }: Props) {
             <h1>{greeting}, Alex <span>👋</span></h1>
           </div>
         </div>
-        <button className="icon-button" onClick={onTheme} aria-label="Toggle theme" type="button">
-          {dark ? '☀' : '☾'}
-        </button>
       </header>
 
       <section className="priority-card">
