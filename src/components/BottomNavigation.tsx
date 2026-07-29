@@ -1,11 +1,11 @@
-export type AppTab = 'Dashboard' | 'Tasks' | 'Calendar' | 'Goals' | 'Profile';
+export type AppTab = 'Dashboard' | 'Tasks' | 'Calendar' | 'Goals' | 'Settings';
 
 const tabs: { label: AppTab; icon: string }[] = [
   { label: 'Dashboard', icon: '⌂' },
   { label: 'Tasks', icon: '✓' },
   { label: 'Calendar', icon: '□' },
   { label: 'Goals', icon: '⚑' },
-  { label: 'Profile', icon: '○' },
+  { label: 'Settings', icon: '⚙' },
 ];
 
 type Props = {

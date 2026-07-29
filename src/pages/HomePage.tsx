@@ -2,6 +2,7 @@ import { useMemo, useState } from 'react';
 import { Dashboard } from '../components/Dashboard';
 import { BottomNavigation, type AppTab } from '../components/BottomNavigation';
 import { TasksView } from '../components/TasksView';
+import { SettingsView } from '../components/SettingsView';
 
 export function HomePage() {
   const [tab, setTab] = useState<AppTab>('Dashboard');
@@ -10,6 +11,7 @@ export function HomePage() {
   const content = useMemo(() => {
     if (tab === 'Tasks') return <TasksView />;
     if (tab === 'Dashboard') return <Dashboard dark={dark} onTheme={() => setDark(!dark)} />;
+    if (tab === 'Settings') return <SettingsView dark={dark} onTheme={() => setDark(!dark)} />;
     return (
       <section className="empty-view">
         <div className="empty-view__icon">
