@@ -4,6 +4,10 @@ type Props = { dark: boolean; onTheme: () => void };
 type Language = 'English' | 'Русский' | 'Қазақша';
 
 export function SettingsView({ dark, onTheme }: Props) {
+  const [name, setName] = useState(
+    () => localStorage.getItem('smart-life-name') ?? 'Alex Morgan',
+  );
+  const [editingName, setEditingName] = useState(false);
   const [language, setLanguage] = useState<Language>(
     () => (localStorage.getItem('smart-life-language') as Language | null) ?? 'English',
   );
@@ -32,8 +36,8 @@ export function SettingsView({ dark, onTheme }: Props) {
 
       <section className="profile-card">
         <img src="/assets/smart-life-logo.png" alt="Profile" />
-        <div><h2>Alex Morgan</h2><p>alex@example.com</p></div>
-        <button onClick={() => setMessage('Profile editor opened')} type="button">Edit</button>
+        <div><h2>{name}</h2><p>alex@example.com</p></div>
+        <button onClick={() => setEditingName(true)} type="button">Edit</button>
       </section>
 
       <section className="settings-section">
@@ -74,7 +78,55 @@ export function SettingsView({ dark, onTheme }: Props) {
       </section>
 
       <button className="sign-out-button" onClick={() => setMessage('Sign out will be available after authentication is connected')} type="button">Sign out</button>
+      {editingName && (
+        <NameEditor
+          currentName={name}
+          onClose={() => setEditingName(false)}
+          onSave={(newName) => {
+            setName(newName);
+            localStorage.setItem('smart-life-name', newName);
+            setEditingName(false);
+            setMessage('Profile name updated');
+          }}
+        />
+      )}
       {message && <button className="toast" onClick={() => setMessage('')} type="button">{message}<span>×</span></button>}
+    </div>
+  );
+}
+
+function NameEditor({ currentName, onClose, onSave }: {
+  currentName: string;
+  onClose: () => void;
+  onSave: (name: string) => void;
+}) {
+  const [value, setValue] = useState(currentName);
+  return (
+    <div className="modal-backdrop" onMouseDown={onClose}>
+      <form
+        className="tracker-modal name-editor"
+        onMouseDown={(event) => event.stopPropagation()}
+        onSubmit={(event) => {
+          event.preventDefault();
+          if (value.trim()) onSave(value.trim());
+        }}
+      >
+        <button className="modal-close" onClick={onClose} type="button">×</button>
+        <div className="tracker-symbol pink">☺</div>
+        <h2>Edit profile</h2>
+        <p>Choose the name shown across your dashboard.</p>
+        <label htmlFor="profile-name">Your name</label>
+        <input
+          autoFocus
+          className="amount-input"
+          id="profile-name"
+          maxLength={40}
+          onChange={(event) => setValue(event.target.value)}
+          placeholder="Enter your name"
+          value={value}
+        />
+        <button className="save-profile-button" disabled={!value.trim()} type="submit">Save changes</button>
+      </form>
     </div>
   );
 }

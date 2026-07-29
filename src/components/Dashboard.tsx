@@ -10,6 +10,8 @@ const initialTasks = [
 export function Dashboard() {
   const [tasks, setTasks] = useState(initialTasks);
   const [message, setMessage] = useState('');
+  const name = localStorage.getItem('smart-life-name') ?? 'Alex Morgan';
+  const firstName = name.trim().split(/\s+/)[0];
   const hour = new Date().getHours();
   const greeting = hour < 12 ? 'Good morning' : hour < 18 ? 'Good afternoon' : 'Good evening';
   const today = new Intl.DateTimeFormat('en', {
@@ -23,7 +25,7 @@ export function Dashboard() {
           <img className="app-logo" src="/assets/smart-life-logo.png" alt="Smart Life logo" />
           <div>
             <p className="eyebrow">{today}</p>
-            <h1>{greeting}, Alex <span>👋</span></h1>
+            <h1>{greeting}, {firstName} <span>👋</span></h1>
           </div>
         </div>
       </header>
