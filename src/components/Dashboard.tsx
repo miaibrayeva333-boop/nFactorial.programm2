@@ -107,7 +107,7 @@ export function Dashboard() {
           <span className="priority-label">{topPriority.done ? '✓ FINISHED' : 'TODAY’S TOP PRIORITY'}</span>
           <button onClick={() => setMessage('Priority options opened')} type="button">•••</button>
         </div>
-        <h2>{topPriority.title}</h2>
+        {!topPriority.done && <h2>{topPriority.title}</h2>}
         <p>{topPriority.done ? 'Beautiful work—your most important task is complete.' : 'Complete your most important task and make today count.'}</p>
         {topPriority.done && (
           <div className="moving-poem" key={priorityWins}>

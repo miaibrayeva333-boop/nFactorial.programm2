@@ -41,7 +41,7 @@ h1, h2, h3, p { margin-top: 0; }
   box-shadow: 0 16px 40px rgba(94, 84, 218, .22);
 }
 .priority-card.completed { background: linear-gradient(135deg, #238f72 0%, #35ad82 52%, #6259df 135%); }
-.moving-poem { position: relative; display: grid; gap: 4px; margin: 18px 0; padding: 13px 16px; overflow: hidden; border: 1px solid rgba(255,255,255,.2); border-radius: 15px; background: rgba(255,255,255,.12); font-size: 12px; font-style: italic; line-height: 1.45; animation: poem-arrive .8s cubic-bezier(.2,.9,.3,1); }
+.moving-poem { position: relative; display: grid; gap: 7px; margin: 22px 0; padding: 20px 22px; overflow: hidden; border: 1px solid rgba(255,255,255,.24); border-radius: 18px; background: rgba(255,255,255,.14); font-size: clamp(16px, 3vw, 21px); font-style: italic; font-weight: 600; line-height: 1.45; letter-spacing: -.01em; animation: poem-arrive .8s cubic-bezier(.2,.9,.3,1); }
 .moving-poem::after { content: '✦'; position: absolute; top: 8px; right: 13px; color: #fff6b4; animation: poem-sparkle 1.7s infinite ease-in-out; }
 .moving-poem span { animation: poem-drift 3.8s infinite ease-in-out alternate; }.moving-poem span:last-child { animation-delay: .35s; }
 @keyframes poem-arrive { from { opacity: 0; transform: translateY(18px) scale(.96); } }
