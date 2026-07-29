@@ -59,35 +59,50 @@ export function AiChat({ onClose }: Props) {
   }
 
   return (
-    <div className="modal-backdrop ai-backdrop" onMouseDown={onClose}>
-      <section className="ai-chat" onMouseDown={(event) => event.stopPropagation()}>
+    <div className="ai-page">
+      <section className="ai-chat">
         <header className="ai-chat__header">
+          <button className="ai-back" onClick={onClose} type="button">‹</button>
           <div className="ai-avatar">✦</div>
-          <div><h2>Smart Life AI</h2><p><i /> Online assistant</p></div>
-          <button onClick={onClose} type="button">×</button>
+          <div><h2>Smart Life AI</h2><p><i /> Your personal planning assistant</p></div>
         </header>
         <div className="ai-messages">
+          {messages.length === 1 && (
+            <div className="ai-welcome">
+              <div className="ai-welcome__mark">✦</div>
+              <h1>How can I help with your day?</h1>
+              <p>Ask me to plan, prioritize, find free time, or organize unfinished tasks.</p>
+            </div>
+          )}
           {messages.map((message) => (
-            <div className={`chat-message ${message.role}`} key={message.id}>{message.text}</div>
+            message.id === 1 && messages.length === 1 ? null : (
+              <div className={`chat-line ${message.role}`} key={message.id}>
+                <div className="chat-line__avatar">{message.role === 'assistant' ? '✦' : 'A'}</div>
+                <div className="chat-message">{message.text}</div>
+              </div>
+            )
           ))}
           {loading && <div className="chat-message assistant typing"><i /><i /><i /></div>}
           <div ref={endRef} />
         </div>
-        {messages.length === 1 && (
-          <div className="chat-suggestions">
-            {suggestions.map((item) => <button onClick={() => void send(item)} type="button" key={item}>{item}</button>)}
-          </div>
-        )}
-        <form className="chat-input" onSubmit={submit}>
-          <input
-            autoFocus
-            maxLength={1000}
-            onChange={(event) => setQuestion(event.target.value)}
-            placeholder="Ask about your day..."
-            value={question}
-          />
-          <button aria-label="Send message" disabled={!question.trim() || loading} type="submit">➤</button>
-        </form>
+        <footer className="ai-composer">
+          {messages.length === 1 && (
+            <div className="chat-suggestions">
+              {suggestions.map((item) => <button onClick={() => void send(item)} type="button" key={item}>{item}</button>)}
+            </div>
+          )}
+          <form className="chat-input" onSubmit={submit}>
+            <input
+              autoFocus
+              maxLength={1000}
+              onChange={(event) => setQuestion(event.target.value)}
+              placeholder="Message Smart Life..."
+              value={question}
+            />
+            <button aria-label="Send message" disabled={!question.trim() || loading} type="submit">↑</button>
+          </form>
+          <small>Smart Life can make mistakes. Check important information.</small>
+        </footer>
       </section>
     </div>
   );
