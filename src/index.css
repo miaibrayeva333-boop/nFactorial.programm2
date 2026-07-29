@@ -82,7 +82,7 @@ h1, h2, h3, p { margin-top: 0; }
 .habit-list { display: grid; gap: 8px; margin-top: 20px; }
 .habit-list button { display: flex; align-items: center; gap: 12px; padding: 12px; border: 1px solid var(--line); border-radius: 15px; color: var(--text); background: var(--soft-surface); text-align: left; }
 .habit-check { display: grid; place-items: center; width: 24px; height: 24px; border: 2px solid #c9cad4; border-radius: 8px; }.habit-check.done { color: #fff; border-color: var(--primary); background: var(--primary); }
-.mood-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 9px; margin-top: 20px; }
+.mood-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 9px; max-height: 330px; margin-top: 20px; padding-right: 3px; overflow-y: auto; }
 .mood-grid button { display: grid; place-items: center; gap: 5px; min-height: 78px; border: 1px solid var(--line); border-radius: 16px; color: var(--text); background: var(--soft-surface); }.mood-grid button span { font-size: 25px; }.mood-grid button.selected { border-color: var(--primary); color: var(--primary); background: var(--primary-soft); box-shadow: inset 0 0 0 1px var(--primary); }
 .amount-input { width: 100%; margin: 14px 0 10px; padding: 15px; border: 1px solid var(--line); border-radius: 15px; outline: 0; color: var(--text); background: var(--soft-surface); font-size: 18px; }
 .budget-actions { display: grid; grid-template-columns: 1fr 1fr; gap: 9px; }.budget-actions button { padding: 13px; border: 0; border-radius: 14px; color: #fff; background: var(--primary); font-weight: 700; }.budget-actions button:last-child { background: #ee7181; }.budget-actions button:disabled { opacity: .4; cursor: default; }

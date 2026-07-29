@@ -11,8 +11,12 @@ const defaults: Metrics = {
 };
 const habitNames = ['Morning stretch', 'Read', 'Walk', 'Vitamins', 'Meditate', 'No screens late'];
 const moods = [
-  ['Amazing', '🤩'], ['Happy', '😊'], ['Focused', '🎯'],
-  ['Calm', '😌'], ['Tired', '😴'], ['Low', '😔'],
+  ['Amazing', '🤩'], ['Happy', '😊'], ['Excited', '🥳'],
+  ['Loved', '🥰'], ['Proud', '😌'], ['Focused', '🎯'],
+  ['Calm', '🧘'], ['Okay', '🙂'], ['Unsure', '😕'],
+  ['Tired', '😴'], ['Bored', '🥱'], ['Low', '😔'],
+  ['Lonely', '🥺'], ['Anxious', '😰'], ['Overwhelmed', '😵‍💫'],
+  ['Frustrated', '😤'], ['Angry', '😠'], ['Sad', '😢'],
 ];
 
 export function DailyTrackers() {
