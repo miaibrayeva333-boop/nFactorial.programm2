@@ -6,7 +6,7 @@ import { SettingsView } from '../components/SettingsView';
 import { AiChat } from '../components/AiChat';
 import { CalendarView } from '../components/CalendarView';
 import { GoalsView } from '../components/GoalsView';
-import { HealthView } from '../components/HealthView';
+import { HealthHub } from '../components/HealthHub';
 
 export function HomePage() {
   const [tab, setTab] = useState<AppTab>('Dashboard');
@@ -17,7 +17,7 @@ export function HomePage() {
     if (tab === 'Dashboard') return <Dashboard />;
     if (tab === 'Calendar') return <CalendarView />;
     if (tab === 'Goals') return <GoalsView />;
-    if (tab === 'Health') return <HealthView />;
+    if (tab === 'Health') return <HealthHub />;
     if (tab === 'AI') return <AiChat />;
     if (tab === 'Settings') return <SettingsView dark={dark} onTheme={() => setDark(!dark)} />;
     return null;
