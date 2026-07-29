@@ -2,14 +2,12 @@ import { FormEvent, useEffect, useRef, useState } from 'react';
 import { isSupabaseConfigured, supabase } from '../lib/supabase';
 
 type Message = { id: number; role: 'assistant' | 'user'; text: string };
-type Props = { onClose: () => void };
-
 const suggestions = ['Plan my day', 'Prioritize my tasks', 'When should I take a break?'];
 const system = `You are Smart Life, a concise and friendly personal organization assistant.
 Help with planning, prioritizing, schedules, free time, breaks, habits, and unfinished tasks.
 Give practical short answers with clear next steps. Never claim to change data you cannot access.`;
 
-export function AiChat({ onClose }: Props) {
+export function AiChat() {
   const [messages, setMessages] = useState<Message[]>([
     { id: 1, role: 'assistant', text: 'Hi! How can I help organize your day?' },
   ]);
@@ -62,7 +60,6 @@ export function AiChat({ onClose }: Props) {
     <div className="ai-page">
       <section className="ai-chat">
         <header className="ai-chat__header">
-          <button className="ai-back" onClick={onClose} type="button">‹</button>
           <div className="ai-avatar">✦</div>
           <div><h2>Smart Life AI</h2><p><i /> Your personal planning assistant</p></div>
         </header>

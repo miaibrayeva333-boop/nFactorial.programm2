@@ -12,7 +12,7 @@ export function HomePage() {
   const content = useMemo(() => {
     if (tab === 'Tasks') return <TasksView />;
     if (tab === 'Dashboard') return <Dashboard />;
-    if (tab === 'AI') return <AiChat onClose={() => setTab('Dashboard')} />;
+    if (tab === 'AI') return <AiChat />;
     if (tab === 'Settings') return <SettingsView dark={dark} onTheme={() => setDark(!dark)} />;
     return (
       <section className="empty-view">

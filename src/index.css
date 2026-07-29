@@ -177,7 +177,6 @@ h1, h2, h3, p { margin-top: 0; }
 .ai-chat__header { display: flex; align-items: center; gap: 11px; padding: 12px max(18px, calc((100vw - 900px) / 2)); border-bottom: 1px solid var(--line); background: color-mix(in srgb, var(--surface) 94%, transparent); backdrop-filter: blur(18px); }
 .ai-avatar, .ai-welcome__mark { display: grid; place-items: center; width: 42px; height: 42px; border-radius: 14px; color: #fff; background: linear-gradient(135deg, #6259df, #8c82f0); box-shadow: 0 7px 16px rgba(98, 89, 223, .25); }
 .ai-chat__header > div:last-child { flex: 1; }.ai-chat__header h2 { margin: 0 0 3px; font-size: 15px; }.ai-chat__header p { display: flex; align-items: center; gap: 5px; margin: 0; color: var(--muted); font-size: 10px; }.ai-chat__header p i { width: 6px; height: 6px; border-radius: 50%; background: #4ebd84; }
-.ai-back { width: 38px; height: 38px; border: 0; border-radius: 12px; color: var(--text); background: var(--soft-surface); font-size: 30px; line-height: 1; }
 .ai-messages { width: min(100%, 800px); margin: 0 auto; overflow-y: auto; padding: 28px 22px 150px; }
 .ai-welcome { display: grid; place-items: center; min-height: 100%; align-content: center; padding-bottom: 20px; text-align: center; }
 .ai-welcome__mark { width: 58px; height: 58px; margin-bottom: 20px; border-radius: 19px; font-size: 24px; }
