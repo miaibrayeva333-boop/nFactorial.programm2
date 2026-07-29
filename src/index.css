@@ -90,6 +90,9 @@ h1, h2, h3, p { margin-top: 0; }
 .task-list { overflow: hidden; border: 1px solid var(--line); border-radius: 22px; background: var(--surface); }
 .task-row { display: flex; align-items: center; gap: 13px; min-height: 74px; padding: 13px 17px; border-bottom: 1px solid var(--line); }
 .task-row:last-child { border-bottom: 0; }
+.task-row.high-priority { background: color-mix(in srgb, #ef5968 7%, var(--surface)); box-shadow: inset 4px 0 #ef5968; }
+.task-row.high-priority h3 { color: #d94354; }
+.priority-badge { display: inline-block; margin-left: 8px; padding: 3px 7px; border-radius: 7px; color: #d94354; background: rgba(239, 89, 104, .12); font-size: 9px; font-weight: 700; text-transform: uppercase; }
 .task-row > div { flex: 1; min-width: 0; }
 .task-row h3 { margin: 0 0 4px; overflow: hidden; font-size: 14px; text-overflow: ellipsis; white-space: nowrap; }
 .task-row h3.done { color: var(--muted); text-decoration: line-through; }

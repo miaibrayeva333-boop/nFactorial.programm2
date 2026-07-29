@@ -2,9 +2,9 @@ import { useState } from 'react';
 import { DailyTrackers } from './DailyTrackers';
 
 const initialTasks = [
-  { title: 'Finish project presentation', meta: 'Work · 10:30 AM', done: false, color: 'purple' },
-  { title: 'Morning workout', meta: 'Wellness · 7:00 AM', done: true, color: 'green' },
-  { title: 'Review monthly budget', meta: 'Finance · 6:00 PM', done: false, color: 'orange' },
+  { title: 'Finish project presentation', meta: 'Work · 10:30 AM', done: false, color: 'purple', priority: 'high' },
+  { title: 'Morning workout', meta: 'Wellness · 7:00 AM', done: true, color: 'green', priority: 'medium' },
+  { title: 'Review monthly budget', meta: 'Finance · 6:00 PM', done: false, color: 'orange', priority: 'low' },
 ];
 
 type Props = { dark: boolean; onTheme: () => void };
@@ -51,15 +51,15 @@ export function Dashboard({ dark, onTheme }: Props) {
       </section>
 
       <section className="section">
-        <div className="section-title"><h2>Your day</h2><button onClick={() => setMessage('Weekly insights: you are 12% more productive')} type="button">View insights</button></div>
+        <div className="section-title"><h2>Your day</h2></div>
         <DailyTrackers />
       </section>
 
       <section className="section">
-        <div className="section-title"><h2>Today’s tasks <span>{tasks.length}</span></h2><button onClick={() => setMessage('Open Tasks from the menu below to manage everything')} type="button">See all</button></div>
+        <div className="section-title"><h2>Today’s tasks <span>{tasks.length}</span></h2></div>
         <div className="task-list">
           {tasks.map((task) => (
-            <article className="task-row" key={task.title}>
+            <article className={task.priority === 'high' ? 'task-row high-priority' : 'task-row'} key={task.title}>
               <button
                 aria-label={`Mark ${task.title} ${task.done ? 'incomplete' : 'complete'}`}
                 className={task.done ? 'check checked' : 'check'}
@@ -67,7 +67,10 @@ export function Dashboard({ dark, onTheme }: Props) {
                 type="button"
               >{task.done ? '✓' : ''}</button>
               <i className={`task-dot ${task.color}`} />
-              <div><h3 className={task.done ? 'done' : ''}>{task.title}</h3><p>{task.meta}</p></div>
+              <div>
+                <h3 className={task.done ? 'done' : ''}>{task.title}</h3>
+                <p>{task.meta}{task.priority === 'high' && <strong className="priority-badge">High priority</strong>}</p>
+              </div>
               <span>›</span>
             </article>
           ))}
