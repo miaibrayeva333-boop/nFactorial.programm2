@@ -18,6 +18,7 @@ export function GoalsView() {
   });
   const [editorOpen, setEditorOpen] = useState(false);
   const [newGoalId, setNewGoalId] = useState<number | null>(null);
+  const [deleteGoal, setDeleteGoal] = useState<Goal | null>(null);
 
   function save(next: Goal[]) {
     setGoals(next);
@@ -54,7 +55,7 @@ export function GoalsView() {
             <article className={`goal-card urgency-${goal.urgency.toLowerCase()}${newGoalId === goal.id ? ' just-added' : ''}`} key={goal.id}>
               <div className="goal-card__top">
                 <span className="goal-urgency">{goal.urgency}</span>
-                <button aria-label={`Delete ${goal.title}`} onClick={() => save(goals.filter((item) => item.id !== goal.id))} type="button">×</button>
+                <button aria-label={`Delete ${goal.title}`} onClick={() => setDeleteGoal(goal)} type="button">×</button>
               </div>
               <h2>{goal.title}</h2>
               <p>{goal.reason || 'No details added'}</p>
@@ -82,6 +83,22 @@ export function GoalsView() {
         setEditorOpen(false);
         window.setTimeout(() => setNewGoalId(null), 1200);
       }} />}
+      {deleteGoal && (
+        <div className="modal-backdrop" onMouseDown={() => setDeleteGoal(null)}>
+          <section className="tracker-modal delete-confirmation" onMouseDown={(event) => event.stopPropagation()}>
+            <div className="delete-warning">!</div>
+            <h2>Delete this goal?</h2>
+            <p>Are you sure you want to remove “{deleteGoal.title}”? This action cannot be undone.</p>
+            <div className="delete-confirmation__actions">
+              <button onClick={() => setDeleteGoal(null)} type="button">Cancel</button>
+              <button onClick={() => {
+                save(goals.filter((goal) => goal.id !== deleteGoal.id));
+                setDeleteGoal(null);
+              }} type="button">Delete goal</button>
+            </div>
+          </section>
+        </div>
+      )}
     </div>
   );
 }
