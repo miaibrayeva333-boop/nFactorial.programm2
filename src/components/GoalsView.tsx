@@ -22,6 +22,7 @@ export function GoalsView() {
   function save(next: Goal[]) {
     setGoals(next);
     localStorage.setItem('smart-life-goals', JSON.stringify(next));
+    window.dispatchEvent(new Event('smart-life-progress'));
   }
 
   const sortedGoals = [...goals].sort((a, b) => {

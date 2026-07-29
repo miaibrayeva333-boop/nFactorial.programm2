@@ -1,10 +1,11 @@
-export type AppTab = 'Dashboard' | 'Tasks' | 'Calendar' | 'Goals' | 'AI' | 'Settings';
+export type AppTab = 'Dashboard' | 'Tasks' | 'Calendar' | 'Goals' | 'Health' | 'AI' | 'Settings';
 
 const tabs: { label: AppTab; icon: string }[] = [
   { label: 'Dashboard', icon: '⌂' },
   { label: 'Tasks', icon: '✓' },
   { label: 'Calendar', icon: '□' },
   { label: 'Goals', icon: '⚑' },
+  { label: 'Health', icon: '♡' },
   { label: 'AI', icon: '✦' },
   { label: 'Settings', icon: '⚙' },
 ];

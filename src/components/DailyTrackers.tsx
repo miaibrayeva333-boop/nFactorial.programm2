@@ -24,6 +24,7 @@ export function DailyTrackers() {
 
   useEffect(() => {
     localStorage.setItem('smart-life-metrics', JSON.stringify(metrics));
+    window.dispatchEvent(new Event('smart-life-progress'));
   }, [metrics]);
 
   const completed = metrics.habits.filter(Boolean).length;

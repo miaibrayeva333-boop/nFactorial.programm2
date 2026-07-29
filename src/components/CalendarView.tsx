@@ -6,6 +6,7 @@ type CalendarEvent = {
   date: string;
   time: string;
   color: string;
+  kind?: 'Want to do' | 'Have to do';
 };
 
 const weekdays = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
@@ -26,7 +27,7 @@ export function CalendarView() {
   const [events, setEvents] = useState<CalendarEvent[]>(() => {
     const saved = localStorage.getItem('smart-life-events');
     return saved ? JSON.parse(saved) as CalendarEvent[] : [
-      { id: 1, title: 'Weekly planning', date: dateKey(today), time: '16:00', color: colors[0] },
+      { id: 1, title: 'Weekly planning', date: dateKey(today), time: '16:00', color: colors[0], kind: 'Have to do' },
     ];
   });
 
@@ -101,7 +102,7 @@ export function CalendarView() {
               <article className="agenda-event" key={event.id}>
                 <i style={{ background: event.color }} />
                 <time>{event.time}</time>
-                <div><h3>{event.title}</h3><p>Reminder at event time</p></div>
+                <div><h3>{event.title}</h3><p><b className={event.kind === 'Have to do' ? 'plan-kind required' : 'plan-kind'}>{event.kind ?? 'Want to do'}</b> Reminder at event time</p></div>
                 <button aria-label={`Delete ${event.title}`} onClick={() => save(events.filter((item) => item.id !== event.id))} type="button">×</button>
               </article>
             ))}
@@ -125,9 +126,10 @@ function EventEditor({ date, onClose, onSave }: {
   const [title, setTitle] = useState('');
   const [time, setTime] = useState('09:00');
   const [color, setColor] = useState(colors[0]);
+  const [kind, setKind] = useState<'Want to do' | 'Have to do'>('Want to do');
   function submit(event: FormEvent) {
     event.preventDefault();
-    if (title.trim()) onSave({ id: Date.now(), title: title.trim(), date: dateKey(date), time, color });
+    if (title.trim()) onSave({ id: Date.now(), title: title.trim(), date: dateKey(date), time, color, kind });
   }
   return (
     <div className="modal-backdrop" onMouseDown={onClose}>
@@ -137,6 +139,9 @@ function EventEditor({ date, onClose, onSave }: {
         <h2>New event</h2><p>{date.toLocaleDateString('en', { weekday: 'long', month: 'long', day: 'numeric' })}</p>
         <label>Event name<input autoFocus className="amount-input" value={title} onChange={(event) => setTitle(event.target.value)} placeholder="What’s happening?" /></label>
         <label>Time<input className="amount-input" value={time} onChange={(event) => setTime(event.target.value)} type="time" /></label>
+        <fieldset><legend>What kind of plan is this?</legend><div className="plan-type-options">
+          {(['Want to do', 'Have to do'] as const).map((option) => <button className={kind === option ? 'selected' : ''} key={option} onClick={() => setKind(option)} type="button">{option}</button>)}
+        </div></fieldset>
         <div className="color-picker">{colors.map((item) => <button aria-label={`Use ${item}`} className={color === item ? 'selected' : ''} key={item} onClick={() => setColor(item)} style={{ background: item }} type="button" />)}</div>
         <button className="save-profile-button" disabled={!title.trim()} type="submit">Add event</button>
       </form>

@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { DailyTrackers } from './DailyTrackers';
 
 const initialTasks = [
@@ -8,8 +8,12 @@ const initialTasks = [
 ];
 
 export function Dashboard() {
-  const [tasks, setTasks] = useState(initialTasks);
+  const [tasks, setTasks] = useState(() => {
+    const saved = localStorage.getItem('smart-life-dashboard-tasks');
+    return saved ? JSON.parse(saved) as typeof initialTasks : initialTasks;
+  });
   const [message, setMessage] = useState('');
+  const [revision, setRevision] = useState(0);
   const name = localStorage.getItem('smart-life-name') ?? 'Alex Morgan';
   const firstName = name.trim().split(/\s+/)[0];
   const hour = new Date().getHours();
@@ -17,6 +21,32 @@ export function Dashboard() {
   const today = new Intl.DateTimeFormat('en', {
     weekday: 'long', month: 'long', day: 'numeric',
   }).format(new Date());
+
+  useEffect(() => {
+    localStorage.setItem('smart-life-dashboard-tasks', JSON.stringify(tasks));
+    window.dispatchEvent(new Event('smart-life-progress'));
+  }, [tasks]);
+
+  useEffect(() => {
+    const update = () => setRevision((value) => value + 1);
+    window.addEventListener('smart-life-progress', update);
+    return () => window.removeEventListener('smart-life-progress', update);
+  }, []);
+
+  const productivity = useMemo(() => {
+    const savedMetrics = localStorage.getItem('smart-life-metrics');
+    const habits = savedMetrics
+      ? (JSON.parse(savedMetrics) as { habits?: boolean[] }).habits ?? []
+      : [];
+    const savedGoals = localStorage.getItem('smart-life-goals');
+    const goals = savedGoals
+      ? JSON.parse(savedGoals) as Array<{ progress: number }>
+      : [];
+    const rates = [tasks.filter((task) => task.done).length / tasks.length];
+    if (habits.length) rates.push(habits.filter(Boolean).length / habits.length);
+    if (goals.length) rates.push(goals.reduce((sum, goal) => sum + goal.progress, 0) / goals.length / 100);
+    return Math.round(rates.reduce((sum, rate) => sum + rate, 0) / rates.length * 100);
+  }, [revision, tasks]);
 
   return (
     <div className="dashboard">
@@ -83,8 +113,8 @@ export function Dashboard() {
           </article>
         </section>
         <section className="productivity">
-          <div><span>WEEKLY PRODUCTIVITY</span><h2>84%</h2><p>↑ 12% from last week</p></div>
-          <div className="ring"><b>84</b></div>
+          <div><span>WEEKLY PRODUCTIVITY</span><h2>{productivity}%</h2><p>Updates as you complete items</p></div>
+          <div className="ring" style={{ background: `conic-gradient(var(--primary) ${productivity}%, rgba(98,89,223,.15) 0)` }}><b>{productivity}</b></div>
         </section>
       </div>
       {message && <button className="toast" onClick={() => setMessage('')} type="button">{message}<span>×</span></button>}
