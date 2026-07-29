@@ -6,6 +6,12 @@ const initialTasks = [
   { title: 'Morning workout', meta: 'Wellness · 7:00 AM', done: true, color: 'green', priority: 'medium' },
   { title: 'Review monthly budget', meta: 'Finance · 6:00 PM', done: false, color: 'orange', priority: 'low' },
 ];
+const completionPoems = [
+  ['One brave step, one task now done,', 'You made your way toward the sun.'],
+  ['The list grew quiet, the moment grew bright,', 'You kept your promise and finished it right.'],
+  ['Small wins gather, steady and true,', 'Today moved forward because of you.'],
+  ['You chose your focus, you followed it through,', 'A calmer tomorrow begins here with you.'],
+];
 
 export function Dashboard() {
   const [tasks, setTasks] = useState(() => {
@@ -14,6 +20,9 @@ export function Dashboard() {
   });
   const [message, setMessage] = useState('');
   const [revision, setRevision] = useState(0);
+  const [priorityWins, setPriorityWins] = useState(
+    () => Number(localStorage.getItem('smart-life-priority-wins') ?? 0),
+  );
   const name = localStorage.getItem('smart-life-name') ?? 'Alex Morgan';
   const firstName = name.trim().split(/\s+/)[0];
   const hour = new Date().getHours();
@@ -21,6 +30,20 @@ export function Dashboard() {
   const today = new Intl.DateTimeFormat('en', {
     weekday: 'long', month: 'long', day: 'numeric',
   }).format(new Date());
+  const topPriority = tasks[0];
+  const activePoem = completionPoems[Math.max(0, priorityWins - 1) % completionPoems.length];
+
+  function toggleTask(title: string) {
+    setTasks(tasks.map((task) => {
+      if (task.title !== title) return task;
+      if (task === topPriority && !task.done) {
+        const nextWins = priorityWins + 1;
+        setPriorityWins(nextWins);
+        localStorage.setItem('smart-life-priority-wins', String(nextWins));
+      }
+      return { ...task, done: !task.done };
+    }));
+  }
 
   useEffect(() => {
     localStorage.setItem('smart-life-dashboard-tasks', JSON.stringify(tasks));
@@ -79,20 +102,25 @@ export function Dashboard() {
         </div>
       </header>
 
-      <section className="priority-card">
+      <section className={topPriority.done ? 'priority-card completed' : 'priority-card'}>
         <div className="priority-card__top">
-          <span className="priority-label">TODAY’S TOP PRIORITY</span>
+          <span className="priority-label">{topPriority.done ? '✓ FINISHED' : 'TODAY’S TOP PRIORITY'}</span>
           <button onClick={() => setMessage('Priority options opened')} type="button">•••</button>
         </div>
-        <h2>Finish project presentation</h2>
-        <p>Complete the final slides and prepare speaker notes.</p>
+        <h2>{topPriority.title}</h2>
+        <p>{topPriority.done ? 'Beautiful work—your most important task is complete.' : 'Complete your most important task and make today count.'}</p>
+        {topPriority.done && (
+          <div className="moving-poem" key={priorityWins}>
+            <span>{activePoem[0]}</span><span>{activePoem[1]}</span>
+          </div>
+        )}
         <div className="progress-row">
-          <div className="progress"><i style={{ width: '72%' }} /></div>
-          <b>72%</b>
+          <div className="progress"><i style={{ width: topPriority.done ? '100%' : '72%' }} /></div>
+          <b>{topPriority.done ? '100%' : '72%'}</b>
         </div>
         <div className="priority-footer">
-          <span>◷ Today, 10:30 AM</span>
-          <span>● High priority</span>
+          <span>{topPriority.done ? '✓ Completed today' : '◷ Today, 10:30 AM'}</span>
+          <span>{topPriority.done ? `★ Priority win ${priorityWins}` : '● High priority'}</span>
         </div>
       </section>
 
@@ -109,7 +137,7 @@ export function Dashboard() {
               <button
                 aria-label={`Mark ${task.title} ${task.done ? 'incomplete' : 'complete'}`}
                 className={task.done ? 'check checked' : 'check'}
-                onClick={() => setTasks(tasks.map((item) => item.title === task.title ? { ...item, done: !item.done } : item))}
+                onClick={() => toggleTask(task.title)}
                 type="button"
               >{task.done ? '✓' : ''}</button>
               <i className={`task-dot ${task.color}`} />
