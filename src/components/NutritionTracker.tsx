@@ -1,4 +1,9 @@
-import { FormEvent, useState } from 'react';
+import { FormEvent, lazy, Suspense, useEffect, useState } from 'react';
+import type { ScannedFood } from './BarcodeScanner';
+
+const BarcodeScanner = lazy(() =>
+  import('./BarcodeScanner').then((module) => ({ default: module.BarcodeScanner })),
+);
 
 type Meal = 'Breakfast' | 'Lunch' | 'Dinner' | 'Snack';
 type FoodEntry = {
@@ -22,6 +27,7 @@ export function NutritionTracker() {
     return saved ? JSON.parse(saved) as FoodEntry[] : [];
   });
   const [editorOpen, setEditorOpen] = useState(false);
+  const [region, setRegion] = useState(() => localStorage.getItem('smart-life-food-region') ?? 'Detecting…');
   const todaysEntries = entries.filter((entry) => entry.date === today);
   const totals = todaysEntries.reduce((sum, entry) => ({
     calories: sum.calories + entry.calories,
@@ -31,6 +37,28 @@ export function NutritionTracker() {
   }), { calories: 0, protein: 0, carbs: 0, fat: 0 });
   const remaining = target - totals.calories;
   const calorieProgress = Math.min(100, totals.calories / target * 100);
+
+  useEffect(() => {
+    if (region !== 'Detecting…') return;
+    const fallback = () => {
+      const localeRegion = navigator.language.split('-')[1]?.toUpperCase() ?? 'WORLD';
+      setRegion(localeRegion);
+      localStorage.setItem('smart-life-food-region', localeRegion);
+    };
+    if (!navigator.geolocation) return fallback();
+    navigator.geolocation.getCurrentPosition(async ({ coords }) => {
+      try {
+        const url = `https://api.bigdatacloud.net/data/reverse-geocode-client?latitude=${coords.latitude}&longitude=${coords.longitude}&localityLanguage=en`;
+        const response = await fetch(url);
+        const data = await response.json() as { countryCode?: string };
+        const detected = data.countryCode?.toUpperCase() ?? 'WORLD';
+        setRegion(detected);
+        localStorage.setItem('smart-life-food-region', detected);
+      } catch {
+        fallback();
+      }
+    }, fallback, { maximumAge: 86400000, timeout: 8000 });
+  }, [region]);
 
   function save(next: FoodEntry[]) {
     setEntries(next);
@@ -46,14 +74,24 @@ export function NutritionTracker() {
     <div className="dashboard nutrition-view">
       <header className="topbar nutrition-header">
         <div><p className="eyebrow">DAILY FOOD DIARY</p><h1>Nutrition</h1></div>
-        <button className="add-button" onClick={() => setEditorOpen(true)} type="button">＋</button>
+        <div className="nutrition-header-actions">
+          <select aria-label="Food region" onChange={(event) => { setRegion(event.target.value); localStorage.setItem('smart-life-food-region', event.target.value); }} value={region}>
+            <option value="WORLD">Worldwide</option><option value="US">US</option><option value="CA">Canada</option>
+            <option value="GB">UK</option><option value="EU">Europe</option><option value="KZ">Kazakhstan</option>
+            <option value="AU">Australia</option><option value="IN">India</option><option value="JP">Japan</option>
+            {region === 'Detecting…' && <option>Detecting…</option>}
+            {!['Detecting…', 'WORLD', 'US', 'CA', 'GB', 'EU', 'KZ', 'AU', 'IN', 'JP'].includes(region) &&
+              <option value={region}>{region}</option>}
+          </select>
+          <button className="add-button" onClick={() => setEditorOpen(true)} type="button">＋</button>
+        </div>
       </header>
       <section className="calorie-summary">
         <div className="calorie-ring" style={{ background: `conic-gradient(#36ad82 ${calorieProgress}%, var(--line) 0)` }}>
           <div><strong>{Math.abs(remaining)}</strong><span>{remaining >= 0 ? 'remaining' : 'over target'}</span></div>
         </div>
         <div className="calorie-equation">
-          <div><strong>{target}</strong><span>Target</span></div><b>−</b>
+          <div><strong>{target} <small>calories</small></strong><span>Target</span></div><b>−</b>
           <div><strong>{totals.calories}</strong><span>Food</span></div><b>=</b>
           <div><strong>{remaining}</strong><span>Left</span></div>
         </div>
@@ -102,6 +140,11 @@ function FoodEditor({ onClose, onSave }: { onClose: () => void; onSave: (entry: 
   const [protein, setProtein] = useState('0');
   const [carbs, setCarbs] = useState('0');
   const [fat, setFat] = useState('0');
+  const [scannerOpen, setScannerOpen] = useState(false);
+  function applyScannedFood(food: ScannedFood) {
+    setName(food.name); setCalories(String(food.calories)); setProtein(String(food.protein));
+    setCarbs(String(food.carbs)); setFat(String(food.fat)); setScannerOpen(false);
+  }
   function submit(event: FormEvent) {
     event.preventDefault();
     if (name.trim() && Number(calories) >= 0) onSave({
@@ -114,6 +157,7 @@ function FoodEditor({ onClose, onSave }: { onClose: () => void; onSave: (entry: 
       <form className="tracker-modal food-editor" onMouseDown={(event) => event.stopPropagation()} onSubmit={submit}>
         <button className="modal-close" onClick={onClose} type="button">×</button>
         <div className="tracker-symbol orange">◉</div><h2>Add food</h2><p>Use the nutrition label or a trusted food database.</p>
+        <button className="scan-barcode-button" onClick={() => setScannerOpen(true)} type="button"><span>▥</span> Scan barcode</button>
         <label>Meal<select value={meal} onChange={(event) => setMeal(event.target.value as Meal)}>{meals.map((item) => <option key={item}>{item}</option>)}</select></label>
         <label>Food name<input autoFocus className="amount-input" value={name} onChange={(event) => setName(event.target.value)} placeholder="e.g. Greek yogurt" /></label>
         <label>Calories<input className="amount-input" min="0" value={calories} onChange={(event) => setCalories(event.target.value)} type="number" /></label>
@@ -123,6 +167,11 @@ function FoodEditor({ onClose, onSave }: { onClose: () => void; onSave: (entry: 
           <label>Fat (g)<input min="0" value={fat} onChange={(event) => setFat(event.target.value)} type="number" /></label>
         </div>
         <button className="save-profile-button" disabled={!name.trim() || calories === ''} type="submit">Add to diary</button>
+        {scannerOpen && (
+          <Suspense fallback={<div className="nutrition-scanner-loading">Opening camera…</div>}>
+            <BarcodeScanner onClose={() => setScannerOpen(false)} onFound={applyScannedFood} />
+          </Suspense>
+        )}
       </form>
     </div>
   );
