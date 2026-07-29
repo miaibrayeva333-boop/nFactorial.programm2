@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { DailyTrackers } from './DailyTrackers';
 
 const initialTasks = [
   { title: 'Finish project presentation', meta: 'Work · 10:30 AM', done: false, color: 'purple' },
@@ -51,12 +52,7 @@ export function Dashboard({ dark, onTheme }: Props) {
 
       <section className="section">
         <div className="section-title"><h2>Your day</h2><button onClick={() => setMessage('Weekly insights: you are 12% more productive')} type="button">View insights</button></div>
-        <div className="metric-grid">
-          <Metric icon="◒" value="5 / 8" label="Glasses of water" tone="blue" progress="62%" />
-          <Metric icon="✓" value="4 / 6" label="Habits completed" tone="green" progress="66%" />
-          <Metric icon="$" value="$1,240" label="Budget remaining" tone="orange" progress="78%" />
-          <Metric icon="☺" value="Focused" label="Today’s mood" tone="pink" />
-        </div>
+        <DailyTrackers />
       </section>
 
       <section className="section">
@@ -94,17 +90,5 @@ export function Dashboard({ dark, onTheme }: Props) {
       {message && <button className="toast" onClick={() => setMessage('')} type="button">{message}<span>×</span></button>}
       <button className="ai-button" onClick={() => setMessage('Your best focus window is 10:30 AM–12:00 PM')} type="button"><span>✦</span> Ask Smart Life</button>
     </div>
-  );
-}
-
-function Metric({ icon, value, label, tone, progress }: {
-  icon: string; value: string; label: string; tone: string; progress?: string;
-}) {
-  return (
-    <article className="metric-card">
-      <div className={`metric-icon ${tone}`}>{icon}</div>
-      <strong>{value}</strong><span>{label}</span>
-      {progress && <div className="mini-progress"><i style={{ width: progress }} /></div>}
-    </article>
   );
 }
