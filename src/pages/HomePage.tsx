@@ -3,6 +3,7 @@ import { Dashboard } from '../components/Dashboard';
 import { BottomNavigation, type AppTab } from '../components/BottomNavigation';
 import { TasksView } from '../components/TasksView';
 import { SettingsView } from '../components/SettingsView';
+import { AiChat } from '../components/AiChat';
 
 export function HomePage() {
   const [tab, setTab] = useState<AppTab>('Dashboard');
@@ -11,6 +12,7 @@ export function HomePage() {
   const content = useMemo(() => {
     if (tab === 'Tasks') return <TasksView />;
     if (tab === 'Dashboard') return <Dashboard />;
+    if (tab === 'AI') return <AiChat onClose={() => setTab('Dashboard')} />;
     if (tab === 'Settings') return <SettingsView dark={dark} onTheme={() => setDark(!dark)} />;
     return (
       <section className="empty-view">
