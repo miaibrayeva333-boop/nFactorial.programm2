@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { DailyTrackers } from './DailyTrackers';
+import { AiChat } from './AiChat';
 
 const initialTasks = [
   { title: 'Finish project presentation', meta: 'Work · 10:30 AM', done: false, color: 'purple', priority: 'high' },
@@ -10,6 +11,7 @@ const initialTasks = [
 export function Dashboard() {
   const [tasks, setTasks] = useState(initialTasks);
   const [message, setMessage] = useState('');
+  const [chatOpen, setChatOpen] = useState(false);
   const name = localStorage.getItem('smart-life-name') ?? 'Alex Morgan';
   const firstName = name.trim().split(/\s+/)[0];
   const hour = new Date().getHours();
@@ -88,7 +90,8 @@ export function Dashboard() {
         </section>
       </div>
       {message && <button className="toast" onClick={() => setMessage('')} type="button">{message}<span>×</span></button>}
-      <button className="ai-button" onClick={() => setMessage('Your best focus window is 10:30 AM–12:00 PM')} type="button"><span>✦</span> Ask Smart Life</button>
+      <button className="ai-button" onClick={() => setChatOpen(true)} type="button"><span>✦</span> Ask Smart Life</button>
+      {chatOpen && <AiChat onClose={() => setChatOpen(false)} />}
     </div>
   );
 }
