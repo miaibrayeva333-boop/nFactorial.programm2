@@ -1,11 +1,7 @@
 import { useEffect, useMemo, useState } from 'react';
 import { DailyTrackers } from './DailyTrackers';
+import { loadTasks, saveTasks } from '../lib/tasks';
 
-const initialTasks = [
-  { title: 'Finish project presentation', meta: 'Work · 10:30 AM', done: false, color: 'purple', priority: 'high' },
-  { title: 'Morning workout', meta: 'Wellness · 7:00 AM', done: true, color: 'green', priority: 'medium' },
-  { title: 'Review monthly budget', meta: 'Finance · 6:00 PM', done: false, color: 'orange', priority: 'low' },
-];
 const completionPoems = [
   ['One brave step, one task now done,', 'You made your way toward the sun.'],
   ['The list grew quiet, the moment grew bright,', 'You kept your promise and finished it right.'],
@@ -14,10 +10,7 @@ const completionPoems = [
 ];
 
 export function Dashboard() {
-  const [tasks, setTasks] = useState(() => {
-    const saved = localStorage.getItem('smart-life-dashboard-tasks');
-    return saved ? JSON.parse(saved) as typeof initialTasks : initialTasks;
-  });
+  const [tasks, setTasks] = useState(loadTasks);
   const [message, setMessage] = useState('');
   const [revision, setRevision] = useState(0);
   const [priorityWins, setPriorityWins] = useState(
@@ -46,8 +39,7 @@ export function Dashboard() {
   }
 
   useEffect(() => {
-    localStorage.setItem('smart-life-dashboard-tasks', JSON.stringify(tasks));
-    window.dispatchEvent(new Event('smart-life-progress'));
+    saveTasks(tasks);
   }, [tasks]);
 
   useEffect(() => {
@@ -133,7 +125,7 @@ export function Dashboard() {
         <div className="section-title"><h2>Today’s tasks <span>{tasks.length}</span></h2></div>
         <div className="task-list">
           {tasks.map((task) => (
-            <article className={task.priority === 'high' ? 'task-row high-priority' : 'task-row'} key={task.title}>
+            <article className={task.priority === 'High' ? 'task-row high-priority' : 'task-row'} key={task.id}>
               <button
                 aria-label={`Mark ${task.title} ${task.done ? 'incomplete' : 'complete'}`}
                 className={task.done ? 'check checked' : 'check'}
@@ -143,7 +135,7 @@ export function Dashboard() {
               <i className={`task-dot ${task.color}`} />
               <div>
                 <h3 className={task.done ? 'done' : ''}>{task.title}</h3>
-                <p>{task.meta}{task.priority === 'high' && <strong className="priority-badge">High priority</strong>}</p>
+                <p>{task.meta}{task.priority === 'High' && <strong className="priority-badge">High priority</strong>}</p>
               </div>
               <span>›</span>
             </article>

@@ -1,13 +1,8 @@
-import { useState } from 'react';
-
-const seed = [
-  { id: 1, title: 'Finish project presentation', category: 'Work', priority: 'High', done: false },
-  { id: 2, title: 'Morning workout', category: 'Wellness', priority: 'Medium', done: true },
-  { id: 3, title: 'Review monthly budget', category: 'Finance', priority: 'Low', done: false },
-];
+import { useEffect, useState } from 'react';
+import { loadTasks, saveTasks } from '../lib/tasks';
 
 export function TasksView() {
-  const [tasks, setTasks] = useState(seed);
+  const [tasks, setTasks] = useState(loadTasks);
   const [query, setQuery] = useState('');
   const [filter, setFilter] = useState<'All' | 'Today' | 'High priority'>('All');
   const visible = tasks.filter((task) => {
@@ -15,10 +10,20 @@ export function TasksView() {
     return matchesQuery && (filter !== 'High priority' || task.priority === 'High');
   });
 
+  useEffect(() => saveTasks(tasks), [tasks]);
+
   function addTask() {
     const title = window.prompt('What needs to be done?');
     if (title?.trim()) {
-      setTasks([...tasks, { id: Date.now(), title, category: 'Personal', priority: 'Medium', done: false }]);
+      setTasks([...tasks, {
+        id: String(Date.now()),
+        title,
+        category: 'Personal',
+        meta: 'Personal · No due time',
+        priority: 'Medium',
+        done: false,
+        color: 'purple',
+      }]);
     }
   }
 
