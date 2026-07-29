@@ -8,10 +8,14 @@ type HealthLog = {
   periodStart?: boolean;
   pain: number;
   symptoms: string[];
+  bodyFeelings?: string[];
+  emotions?: string[];
   notes: string;
 };
 
 const symptomOptions = ['Cramps', 'Headache', 'Bloating', 'Fatigue', 'Back pain', 'Mood changes'];
+const bodyOptions = ['Bloated', 'Crampy', 'Heavy', 'Tender', 'Achy', 'Energetic'];
+const emotionOptions = ['Calm', 'Sensitive', 'Irritable', 'Anxious', 'Low', 'Emotional', 'Confident'];
 
 export function HealthView() {
   const [profile, setProfile] = useState<CycleProfile | null>(() => {
@@ -92,7 +96,10 @@ export function HealthView() {
                 <strong>{new Date(`${log.date}T12:00:00`).getDate()}</strong>
                 <small>{new Date(`${log.date}T12:00:00`).toLocaleDateString('en', { month: 'short' })}</small>
               </div>
-              <div><h3>{log.period ? 'Period day' : 'Health check-in'} · Pain {log.pain}/10</h3><p>{log.symptoms.join(' · ') || 'No symptoms'}{log.notes ? ` — ${log.notes}` : ''}</p></div>
+              <div>
+                <h3>{log.period ? 'Period day' : 'Health check-in'} · Pain {log.pain}/10</h3>
+                <p>{[...(log.bodyFeelings ?? []), ...(log.emotions ?? []), ...log.symptoms].join(' · ') || 'No symptoms'}{log.notes ? ` — ${log.notes}` : ''}</p>
+              </div>
               <button aria-label="Delete health entry" onClick={() => save(logs.filter((item) => item.id !== log.id))} type="button">×</button>
             </article>
           ))}
@@ -112,13 +119,18 @@ function HealthEditor({ onClose, onSave }: { onClose: () => void; onSave: (log: 
   const [period, setPeriod] = useState(false);
   const [pain, setPain] = useState(0);
   const [symptoms, setSymptoms] = useState<string[]>([]);
+  const [bodyFeelings, setBodyFeelings] = useState<string[]>([]);
+  const [emotions, setEmotions] = useState<string[]>([]);
   const [notes, setNotes] = useState('');
   function submit(event: FormEvent) {
     event.preventDefault();
-    onSave({ id: Date.now(), date, period, periodStart: period, pain, symptoms, notes: notes.trim() });
+    onSave({ id: Date.now(), date, period, periodStart: period, pain, symptoms, bodyFeelings, emotions, notes: notes.trim() });
   }
   function toggle(symptom: string) {
     setSymptoms(symptoms.includes(symptom) ? symptoms.filter((item) => item !== symptom) : [...symptoms, symptom]);
+  }
+  function toggleChoice(value: string, selected: string[], update: (values: string[]) => void) {
+    update(selected.includes(value) ? selected.filter((item) => item !== value) : [...selected, value]);
   }
   return (
     <div className="modal-backdrop" onMouseDown={onClose}>
@@ -128,6 +140,12 @@ function HealthEditor({ onClose, onSave }: { onClose: () => void; onSave: (log: 
         <label>Date<input className="amount-input" onChange={(event) => setDate(event.target.value)} type="date" value={date} /></label>
         <button className={period ? 'period-toggle selected' : 'period-toggle'} onClick={() => setPeriod(!period)} type="button"><span>{period ? '✓' : ''}</span> My period started today</button>
         <label>Pain level: <strong>{pain}/10</strong><input className="pain-range" max="10" min="0" onChange={(event) => setPain(Number(event.target.value))} type="range" value={pain} /></label>
+        <fieldset><legend>How does your body feel today?</legend><div className="health-choice-grid body-choices">
+          {bodyOptions.map((feeling) => <button className={bodyFeelings.includes(feeling) ? 'selected' : ''} key={feeling} onClick={() => toggleChoice(feeling, bodyFeelings, setBodyFeelings)} type="button">{feeling}</button>)}
+        </div></fieldset>
+        <fieldset><legend>How do you feel emotionally?</legend><div className="health-choice-grid emotion-choices">
+          {emotionOptions.map((emotion) => <button className={emotions.includes(emotion) ? 'selected' : ''} key={emotion} onClick={() => toggleChoice(emotion, emotions, setEmotions)} type="button">{emotion}</button>)}
+        </div></fieldset>
         <fieldset><legend>Symptoms</legend><div className="symptom-grid">{symptomOptions.map((symptom) => <button className={symptoms.includes(symptom) ? 'selected' : ''} key={symptom} onClick={() => toggle(symptom)} type="button">{symptom}</button>)}</div></fieldset>
         <label>Notes<textarea maxLength={300} onChange={(event) => setNotes(event.target.value)} placeholder="Anything else you noticed?" value={notes} /></label>
         <button className="save-profile-button" type="submit">Save check-in</button>
