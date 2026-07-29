@@ -17,11 +17,22 @@ export function GoalsView() {
     return saved ? JSON.parse(saved) as Goal[] : [];
   });
   const [editorOpen, setEditorOpen] = useState(false);
+  const [newGoalId, setNewGoalId] = useState<number | null>(null);
 
   function save(next: Goal[]) {
     setGoals(next);
     localStorage.setItem('smart-life-goals', JSON.stringify(next));
   }
+
+  const sortedGoals = [...goals].sort((a, b) => {
+    const rank = (goal: Goal) => {
+      if (goal.urgency === 'Urgent' && goal.progress === 0) return 0;
+      if (goal.urgency === 'Urgent') return 1;
+      if (goal.urgency === 'Medium') return 2;
+      return 3;
+    };
+    return rank(a) - rank(b) || a.date.localeCompare(b.date) || a.time.localeCompare(b.time);
+  });
 
   return (
     <div className="dashboard goals-view">
@@ -38,8 +49,8 @@ export function GoalsView() {
 
       {goals.length ? (
         <section className="goal-list">
-          {goals.map((goal) => (
-            <article className={`goal-card urgency-${goal.urgency.toLowerCase()}`} key={goal.id}>
+          {sortedGoals.map((goal) => (
+            <article className={`goal-card urgency-${goal.urgency.toLowerCase()}${newGoalId === goal.id ? ' just-added' : ''}`} key={goal.id}>
               <div className="goal-card__top">
                 <span className="goal-urgency">{goal.urgency}</span>
                 <button aria-label={`Delete ${goal.title}`} onClick={() => save(goals.filter((item) => item.id !== goal.id))} type="button">×</button>
@@ -64,7 +75,12 @@ export function GoalsView() {
         </button>
       )}
 
-      {editorOpen && <GoalEditor onClose={() => setEditorOpen(false)} onSave={(goal) => { save([...goals, goal]); setEditorOpen(false); }} />}
+      {editorOpen && <GoalEditor onClose={() => setEditorOpen(false)} onSave={(goal) => {
+        save([...goals, goal]);
+        setNewGoalId(goal.id);
+        setEditorOpen(false);
+        window.setTimeout(() => setNewGoalId(null), 1200);
+      }} />}
     </div>
   );
 }
