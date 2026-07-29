@@ -9,7 +9,11 @@ const seed = [
 export function TasksView() {
   const [tasks, setTasks] = useState(seed);
   const [query, setQuery] = useState('');
-  const visible = tasks.filter((task) => task.title.toLowerCase().includes(query.toLowerCase()));
+  const [filter, setFilter] = useState<'All' | 'Today' | 'High priority'>('All');
+  const visible = tasks.filter((task) => {
+    const matchesQuery = task.title.toLowerCase().includes(query.toLowerCase());
+    return matchesQuery && (filter !== 'High priority' || task.priority === 'High');
+  });
 
   function addTask() {
     const title = window.prompt('What needs to be done?');
@@ -20,11 +24,22 @@ export function TasksView() {
 
   return (
     <div className="dashboard tasks-view">
-      <header className="topbar"><div><p className="eyebrow">STAY ON TRACK</p><h1>My tasks</h1></div>
+      <header className="topbar"><div className="brand-greeting"><img className="app-logo" src="/assets/smart-life-logo.png" alt="Smart Life logo" /><div><p className="eyebrow">STAY ON TRACK</p><h1>My tasks</h1></div></div>
         <button className="add-button" onClick={addTask} type="button">＋</button>
       </header>
       <div className="search"><span>⌕</span><input value={query} onChange={(event) => setQuery(event.target.value)} placeholder="Search tasks" /></div>
-      <div className="filter-row"><button className="selected" type="button">All</button><button type="button">Today</button><button type="button">High priority</button></div>
+      <div className="filter-row">
+        {(['All', 'Today', 'High priority'] as const).map((option) => (
+          <button
+            className={filter === option ? 'selected' : ''}
+            key={option}
+            onClick={() => setFilter(option)}
+            type="button"
+          >
+            {option}
+          </button>
+        ))}
+      </div>
       <section className="task-list">
         {visible.map((task) => (
           <article className="task-row" key={task.id}>

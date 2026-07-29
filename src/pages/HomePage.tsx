@@ -17,7 +17,7 @@ export function HomePage() {
         </div>
         <h2>{tab}</h2>
         <p>Your {tab.toLowerCase()} workspace is ready.</p>
-        <button type="button">Add your first item</button>
+        <button onClick={() => window.alert(`New ${tab.toLowerCase()} item editor is ready to connect.`)} type="button">Add your first item</button>
       </section>
     );
   }, [dark, tab]);
