@@ -191,6 +191,21 @@ h1, h2, h3, p { margin-top: 0; }
 .chat-suggestions { display: flex; justify-content: center; gap: 8px; overflow-x: auto; padding: 16px 0 9px; }.chat-suggestions button { padding: 9px 12px; border: 1px solid var(--line); border-radius: 13px; color: var(--text); background: var(--surface); box-shadow: 0 5px 16px rgba(20, 20, 50, .05); font-size: 11px; white-space: nowrap; }
 .chat-input { display: flex; gap: 9px; padding: 9px; border: 1px solid var(--line); border-radius: 20px; background: var(--surface); box-shadow: 0 9px 30px rgba(30, 30, 60, .12); }.chat-input input { flex: 1; min-width: 0; padding: 10px 12px; border: 0; outline: 0; color: var(--text); background: transparent; font-size: 14px; }.chat-input button { width: 40px; height: 40px; border: 0; border-radius: 13px; color: #fff; background: var(--primary); font-size: 20px; font-weight: 700; }.chat-input button:disabled { opacity: .25; cursor: default; }
 .ai-composer > small { display: block; margin-top: 7px; color: var(--muted); text-align: center; font-size: 9px; }
+.calendar-header { margin-bottom: 18px; }
+.calendar-card { padding: 20px; border: 1px solid var(--line); border-radius: 25px; background: var(--surface); }
+.month-header { display: grid; grid-template-columns: 42px 1fr 42px; align-items: center; margin-bottom: 18px; text-align: center; }
+.month-header h2 { margin: 0; font-size: 18px; }.month-header button { width: 38px; height: 38px; border: 0; border-radius: 12px; color: var(--text); background: var(--soft-surface); font-size: 25px; }
+.weekday-row, .month-grid { display: grid; grid-template-columns: repeat(7, 1fr); }
+.weekday-row { margin-bottom: 6px; }.weekday-row span { padding: 7px 0; color: var(--muted); text-align: center; font-size: 10px; font-weight: 700; text-transform: uppercase; }
+.month-grid { gap: 5px; }
+.calendar-day { position: relative; display: grid; place-items: center; align-content: center; gap: 5px; min-height: 58px; padding: 4px; border: 1px solid transparent; border-radius: 14px; color: var(--text); background: transparent; }
+.calendar-day:hover { background: var(--soft-surface); }.calendar-day.today { color: var(--primary); border-color: var(--primary); font-weight: 700; }.calendar-day.selected { color: #fff; background: var(--primary); box-shadow: 0 7px 18px rgba(98, 89, 223, .24); }
+.calendar-day i { display: flex; gap: 2px; height: 4px; }.calendar-day i b { width: 4px; height: 4px; border-radius: 50%; }.calendar-day.empty { min-height: 58px; }
+.agenda-section { margin-top: 25px; }.agenda-list { overflow: hidden; border: 1px solid var(--line); border-radius: 21px; background: var(--surface); }
+.agenda-event { display: flex; align-items: center; gap: 12px; min-height: 72px; padding: 13px 16px; border-bottom: 1px solid var(--line); }.agenda-event:last-child { border-bottom: 0; }.agenda-event > i { width: 5px; height: 40px; border-radius: 6px; }.agenda-event time { width: 42px; color: var(--muted); font-size: 12px; }.agenda-event div { flex: 1; }.agenda-event h3 { margin: 0 0 4px; font-size: 14px; }.agenda-event p { margin: 0; color: var(--muted); font-size: 10px; }.agenda-event button { width: 32px; height: 32px; border: 0; border-radius: 10px; color: var(--muted); background: var(--soft-surface); font-size: 19px; }
+.empty-agenda { width: 100%; display: grid; place-items: center; padding: 25px; border: 1px dashed color-mix(in srgb, var(--primary) 35%, var(--line)); border-radius: 21px; color: var(--text); background: var(--surface); }.empty-agenda span { display: grid; place-items: center; width: 38px; height: 38px; margin-bottom: 8px; border-radius: 13px; color: var(--primary); background: var(--primary-soft); font-size: 21px; }.empty-agenda small { margin-top: 4px; color: var(--muted); }
+.event-editor label { display: block; margin-top: 15px; color: var(--muted); font-size: 11px; font-weight: 700; }.event-editor label .amount-input { margin-top: 7px; }
+.color-picker { display: flex; gap: 10px; margin: 16px 0; }.color-picker button { width: 30px; height: 30px; border: 4px solid var(--surface); border-radius: 50%; box-shadow: 0 0 0 1px var(--line); }.color-picker button.selected { box-shadow: 0 0 0 2px var(--text); }
 
 @media (max-width: 680px) {
   .dashboard { width: min(100% - 28px, 980px); padding-top: 22px; }
@@ -205,4 +220,6 @@ h1, h2, h3, p { margin-top: 0; }
   .ai-messages { padding: 22px 16px 145px; }
   .ai-composer { padding: 8px 12px 12px; }
   .chat-suggestions { justify-content: flex-start; }
+  .calendar-card { padding: 14px 10px; }
+  .calendar-day, .calendar-day.empty { min-height: 46px; border-radius: 12px; font-size: 12px; }
 }

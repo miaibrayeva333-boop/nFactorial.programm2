@@ -4,6 +4,7 @@ import { BottomNavigation, type AppTab } from '../components/BottomNavigation';
 import { TasksView } from '../components/TasksView';
 import { SettingsView } from '../components/SettingsView';
 import { AiChat } from '../components/AiChat';
+import { CalendarView } from '../components/CalendarView';
 
 export function HomePage() {
   const [tab, setTab] = useState<AppTab>('Dashboard');
@@ -12,6 +13,7 @@ export function HomePage() {
   const content = useMemo(() => {
     if (tab === 'Tasks') return <TasksView />;
     if (tab === 'Dashboard') return <Dashboard />;
+    if (tab === 'Calendar') return <CalendarView />;
     if (tab === 'AI') return <AiChat />;
     if (tab === 'Settings') return <SettingsView dark={dark} onTheme={() => setDark(!dark)} />;
     return (
