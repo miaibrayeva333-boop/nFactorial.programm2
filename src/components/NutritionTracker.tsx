@@ -1,6 +1,7 @@
 import { FormEvent, lazy, Suspense, useEffect, useState } from 'react';
 import type { ScannedFood } from './BarcodeScanner';
 import { BodyCalculator } from './BodyCalculator';
+import { QuickFoodAdd } from './QuickFoodAdd';
 
 const BarcodeScanner = lazy(() =>
   import('./BarcodeScanner').then((module) => ({ default: module.BarcodeScanner })),
@@ -109,6 +110,12 @@ export function NutritionTracker() {
         <label>Daily calorie target<input key={target} min="500" max="6000" onBlur={(event) => updateTarget(Number(event.target.value))} defaultValue={target} type="number" /></label>
         <small>This is a personal tracking target, not a medical recommendation.</small>
       </section>
+      <QuickFoodAdd onAdd={(food, meal) => save([...entries, {
+        id: Date.now(),
+        date: today,
+        meal,
+        ...food,
+      }])} />
       <BodyCalculator onUseTarget={updateTarget} />
       <div className="meal-list">
         {meals.map((meal) => {

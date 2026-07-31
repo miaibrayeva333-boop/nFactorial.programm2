@@ -56,7 +56,7 @@ export function PhotoFoodScanner({ onClose, onFound }: Props) {
         <button className="save-profile-button" disabled={busy} onClick={() => inputRef.current?.click()} type="button">
           {busy ? 'Analyzing meal…' : preview ? 'Try another photo' : 'Take or choose photo'}
         </button>
-        <small>AI estimates can be wrong, especially for oils, sauces, and portion sizes. Review the values before saving.</small>
+        <small>AI estimates can be wrong, especially for oils, sauces, and portion sizes. Review the entry in your diary.</small>
       </section>
     </div>
   );
