@@ -77,7 +77,7 @@ export function SettingsView({ dark, onTheme, user }: Props) {
           </div>
           <div className="setting-row language-row">
             <span className="setting-icon">♡</span>
-            <span><strong>Gender</strong><small>Controls cycle tracking</small></span>
+            <span><strong>Gender</strong></span>
             <select value={gender} onChange={(event) => chooseGender(event.target.value as Gender)}>
               <option value="female">Female</option>
               <option value="male">Male</option>
