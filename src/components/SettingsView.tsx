@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import type { User } from '@supabase/supabase-js';
 import { supabase } from '../lib/supabase';
+import { getGender, saveGender, type Gender } from '../lib/profile';
 
 type Props = { dark: boolean; onTheme: () => void; user: User };
 type Language = 'English' | 'Русский' | 'Қазақша';
@@ -18,6 +19,7 @@ export function SettingsView({ dark, onTheme, user }: Props) {
   );
   const [message, setMessage] = useState('');
   const [financeOpen, setFinanceOpen] = useState(false);
+  const [gender, setGender] = useState<Gender>(() => getGender() ?? 'prefer-not-to-say');
 
   function chooseLanguage(value: Language) {
     setLanguage(value);
@@ -29,6 +31,14 @@ export function SettingsView({ dark, onTheme, user }: Props) {
     const next = !notifications;
     setNotifications(next);
     localStorage.setItem('smart-life-notifications', String(next));
+  }
+
+  function chooseGender(value: Gender) {
+    setGender(value);
+    saveGender(value);
+    setMessage(value === 'female'
+      ? 'Gender updated. Cycle tracking is now available in Health.'
+      : 'Gender updated. Cycle tracking is hidden.');
   }
 
   return (
@@ -63,6 +73,16 @@ export function SettingsView({ dark, onTheme, user }: Props) {
               <option>English</option>
               <option>Русский</option>
               <option>Қазақша</option>
+            </select>
+          </div>
+          <div className="setting-row language-row">
+            <span className="setting-icon">♡</span>
+            <span><strong>Gender</strong><small>Controls cycle tracking</small></span>
+            <select value={gender} onChange={(event) => chooseGender(event.target.value as Gender)}>
+              <option value="female">Female</option>
+              <option value="male">Male</option>
+              <option value="nonbinary">Non-binary</option>
+              <option value="prefer-not-to-say">Prefer not to say</option>
             </select>
           </div>
           <button className="setting-row" onClick={() => setFinanceOpen(true)} type="button">

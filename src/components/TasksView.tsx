@@ -3,12 +3,8 @@ import { loadTasks, saveTasks } from '../lib/tasks';
 
 export function TasksView() {
   const [tasks, setTasks] = useState(loadTasks);
-  const [query, setQuery] = useState('');
   const [filter, setFilter] = useState<'All' | 'Today' | 'High priority'>('All');
-  const visible = tasks.filter((task) => {
-    const matchesQuery = task.title.toLowerCase().includes(query.toLowerCase());
-    return matchesQuery && (filter !== 'High priority' || task.priority === 'High');
-  });
+  const visible = tasks.filter((task) => filter !== 'High priority' || task.priority === 'High');
 
   useEffect(() => saveTasks(tasks), [tasks]);
 
@@ -32,7 +28,6 @@ export function TasksView() {
       <header className="topbar"><div className="brand-greeting"><img className="app-logo" src="/assets/smart-life-logo.png" alt="Smart Axis logo" /><div><p className="eyebrow">STAY ON TRACK</p><h1>My tasks</h1></div></div>
         <button className="add-button" onClick={addTask} type="button">＋</button>
       </header>
-      <div className="search"><span>⌕</span><input value={query} onChange={(event) => setQuery(event.target.value)} placeholder="Search tasks" /></div>
       <div className="filter-row">
         {(['All', 'Today', 'High priority'] as const).map((option) => (
           <button

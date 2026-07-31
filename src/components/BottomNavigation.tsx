@@ -6,6 +6,7 @@ const tabs: { label: AppTab; icon: string }[] = [
   { label: 'Dashboard', icon: '⌂' },
   { label: 'Health', icon: '♡' },
   { label: 'AI', icon: '✦' },
+  { label: 'Settings', icon: '⚙' },
 ];
 
 type Props = {
