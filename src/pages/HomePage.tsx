@@ -38,7 +38,7 @@ export function HomePage() {
   const content = useMemo(() => {
     if (!session) return null;
     if (tab === 'Tasks') return <TasksView />;
-    if (tab === 'Dashboard') return <Dashboard onOpenSettings={() => setTab('Settings')} />;
+    if (tab === 'Dashboard') return <Dashboard />;
     if (tab === 'Calendar') return <CalendarView />;
     if (tab === 'Health') return <HealthHub />;
     if (tab === 'AI') return <AiChat />;

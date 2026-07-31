@@ -10,7 +10,7 @@ const completionPoems = [
   ['You chose your focus, you followed it through,', 'A calmer tomorrow begins here with you.'],
 ];
 
-export function Dashboard({ onOpenSettings }: { onOpenSettings: () => void }) {
+export function Dashboard() {
   const [tasks, setTasks] = useState(loadTasks);
   const [message, setMessage] = useState('');
   const [revision, setRevision] = useState(0);
@@ -69,7 +69,6 @@ export function Dashboard({ onOpenSettings }: { onOpenSettings: () => void }) {
             <h1>{greeting}, {firstName} <span>👋</span></h1>
           </div>
         </div>
-        <button className="settings-shortcut" aria-label="Open settings" onClick={onOpenSettings} type="button">⚙</button>
       </header>
 
       <section className={topPriority.done ? 'priority-card completed' : 'priority-card'}>
