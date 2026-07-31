@@ -1,15 +1,19 @@
+import { useState } from 'react';
 import { HealthView } from './HealthView';
 import { getGender } from '../lib/profile';
+import { EmotionalWellbeing } from './EmotionalWellbeing';
 
 export function HealthHub() {
   const showCycle = getGender() === 'female';
-  if (showCycle) return <HealthView />;
+  const [section, setSection] = useState<'Wellbeing' | 'Cycle'>('Wellbeing');
 
   return (
-    <div className="dashboard health-empty-view">
-      <span>♡</span>
-      <h1>Health</h1>
-      <p>Cycle tracking is available only when Female is selected in Settings.</p>
-    </div>
+    <>
+      {showCycle && <div className="health-tabs">
+        <button className={section === 'Wellbeing' ? 'selected' : ''} onClick={() => setSection('Wellbeing')} type="button">◡ Wellbeing</button>
+        <button className={section === 'Cycle' ? 'selected' : ''} onClick={() => setSection('Cycle')} type="button">♡ Cycle</button>
+      </div>}
+      {section === 'Cycle' && showCycle ? <HealthView /> : <EmotionalWellbeing />}
+    </>
   );
 }
