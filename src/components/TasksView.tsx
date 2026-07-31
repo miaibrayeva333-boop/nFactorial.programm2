@@ -42,7 +42,7 @@ export function TasksView() {
       </div>
       <section className="task-list">
         {visible.map((task) => (
-          <article className="task-row" key={task.id}>
+          <article className={task.priority === 'High' ? 'task-row high-priority' : 'task-row'} key={task.id}>
             <button className={task.done ? 'check checked' : 'check'} onClick={() => setTasks(tasks.map((item) => item.id === task.id ? { ...item, done: !item.done } : item))} type="button">{task.done ? '✓' : ''}</button>
             <div><h3 className={task.done ? 'done' : ''}>{task.title}</h3><p>{task.category} · {task.priority}</p></div>
             <button className="delete" onClick={() => setTasks(tasks.filter((item) => item.id !== task.id))} type="button">×</button>
