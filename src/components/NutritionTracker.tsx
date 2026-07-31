@@ -40,6 +40,7 @@ export function NutritionTracker() {
   }), { calories: 0, protein: 0, carbs: 0, fat: 0 });
   const remaining = target - totals.calories;
   const calorieProgress = Math.min(100, totals.calories / target * 100);
+  const consumedProgress = Math.min(100, totals.calories / target * 100);
 
   useEffect(() => {
     if (region !== 'Detecting…') return;
@@ -89,16 +90,15 @@ export function NutritionTracker() {
           <button className="add-button" onClick={() => setEditorOpen(true)} type="button">＋</button>
         </div>
       </header>
-      <section className="calorie-summary">
-        <div className="calorie-ring" style={{ background: `conic-gradient(#36ad82 ${calorieProgress}%, var(--line) 0)` }}>
-          <div><strong>{Math.abs(remaining)}</strong><span>{remaining >= 0 ? 'remaining' : 'over target'}</span></div>
-        </div>
-        <div className="calorie-equation">
-          <div><strong>{target} <small>calories</small></strong><span>Target</span></div><b>−</b>
-          <div><strong>{totals.calories}</strong><span>Food</span></div><b>=</b>
-          <div><strong>{remaining}</strong><span>Left</span></div>
+      <section className="nutrition-overview">
+        <header><div><span>TODAY</span><h2>Energy balance</h2></div><small>{calorieProgress.toFixed(0)}% of daily target</small></header>
+        <div className="energy-rings">
+          <EnergyRing label="Consumed" value={totals.calories} progress={consumedProgress} color="#ef9b3f" />
+          <EnergyRing label={remaining >= 0 ? 'Remaining' : 'Over target'} value={Math.abs(remaining)} progress={Math.max(0, 100 - consumedProgress)} color={remaining >= 0 ? '#36ad82' : '#e95c6d'} featured />
+          <EnergyRing label="Daily target" value={target} progress={100} color="#6259df" />
         </div>
       </section>
+      <div className="nutrient-heading"><div><span>MACRONUTRIENTS</span><h2>Daily targets</h2></div><small>Consumed / target</small></div>
       <section className="macro-grid">
         <Macro label="Protein" value={totals.protein} target={120} color="#6259df" />
         <Macro label="Carbs" value={totals.carbs} target={250} color="#e9983f" />
@@ -129,6 +129,17 @@ export function NutritionTracker() {
       <p className="nutrition-note">Nutrition values are estimates. Individual calorie needs vary; talk with a qualified health professional for personalized guidance.</p>
       {editorOpen && <FoodEditor onClose={() => setEditorOpen(false)} onSave={(entry) => { save([...entries, entry]); setEditorOpen(false); }} />}
     </div>
+  );
+}
+
+function EnergyRing({ label, value, progress, color, featured = false }: {
+  label: string; value: number; progress: number; color: string; featured?: boolean;
+}) {
+  return (
+    <article className={featured ? 'energy-ring featured' : 'energy-ring'}>
+      <div style={{ background: `conic-gradient(${color} ${progress}%, var(--line) 0)` }}><span><strong>{value}</strong><small>kcal</small></span></div>
+      <p>{label}</p>
+    </article>
   );
 }
 
