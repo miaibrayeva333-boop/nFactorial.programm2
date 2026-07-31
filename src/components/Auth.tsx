@@ -55,7 +55,7 @@ export function Auth() {
           <button className={mode === 'signup' ? 'selected' : ''} onClick={() => { setMode('signup'); setMessage(''); }} type="button">Register</button>
         </div>
         <h1>{mode === 'signin' ? 'Log in to Smart Axis' : 'Create your account'}</h1>
-        <p className="auth-subtitle">Your tasks, health, goals, and daily plans in one calm place.</p>
+        <p className="auth-subtitle">Your tasks, health, calendar, and daily plans in one calm place.</p>
 
         <button className="google-auth-button" disabled={busy} onClick={() => void useGoogle()} type="button">
           <GoogleMark />

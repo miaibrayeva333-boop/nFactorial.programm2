@@ -1,5 +1,6 @@
 import { useEffect, useMemo, useState } from 'react';
 import { DailyTrackers } from './DailyTrackers';
+import { StepCounter } from './StepCounter';
 import { loadTasks, saveTasks } from '../lib/tasks';
 
 const completionPoems = [
@@ -9,7 +10,7 @@ const completionPoems = [
   ['You chose your focus, you followed it through,', 'A calmer tomorrow begins here with you.'],
 ];
 
-export function Dashboard() {
+export function Dashboard({ onOpenSettings }: { onOpenSettings: () => void }) {
   const [tasks, setTasks] = useState(loadTasks);
   const [message, setMessage] = useState('');
   const [revision, setRevision] = useState(0);
@@ -53,34 +54,10 @@ export function Dashboard() {
     const habits = savedMetrics
       ? (JSON.parse(savedMetrics) as { habits?: boolean[] }).habits ?? []
       : [];
-    const savedGoals = localStorage.getItem('smart-life-goals');
-    const goals = savedGoals
-      ? JSON.parse(savedGoals) as Array<{ progress: number }>
-      : [];
     const rates = [tasks.filter((task) => task.done).length / tasks.length];
     if (habits.length) rates.push(habits.filter(Boolean).length / habits.length);
-    if (goals.length) rates.push(goals.reduce((sum, goal) => sum + goal.progress, 0) / goals.length / 100);
     return Math.round(rates.reduce((sum, rate) => sum + rate, 0) / rates.length * 100);
   }, [revision, tasks]);
-
-  const dashboardGoals = useMemo(() => {
-    const saved = localStorage.getItem('smart-life-goals');
-    const goals = saved ? JSON.parse(saved) as Array<{
-      id: number;
-      title: string;
-      date: string;
-      time: string;
-      urgency: 'Low' | 'Medium' | 'Urgent';
-      progress: number;
-    }> : [];
-    const rank = (goal: typeof goals[number]) => {
-      if (goal.urgency === 'Urgent' && goal.progress === 0) return 0;
-      if (goal.urgency === 'Urgent') return 1;
-      if (goal.urgency === 'Medium') return 2;
-      return 3;
-    };
-    return goals.sort((a, b) => rank(a) - rank(b) || a.date.localeCompare(b.date)).slice(0, 3);
-  }, [revision]);
 
   return (
     <div className="dashboard">
@@ -92,6 +69,7 @@ export function Dashboard() {
             <h1>{greeting}, {firstName} <span>👋</span></h1>
           </div>
         </div>
+        <button className="settings-shortcut" aria-label="Open settings" onClick={onOpenSettings} type="button">⚙</button>
       </header>
 
       <section className={topPriority.done ? 'priority-card completed' : 'priority-card'}>
@@ -118,6 +96,7 @@ export function Dashboard() {
 
       <section className="section">
         <div className="section-title"><h2>Your day</h2></div>
+        <StepCounter />
         <DailyTrackers />
       </section>
 
@@ -143,24 +122,6 @@ export function Dashboard() {
         </div>
       </section>
 
-      {dashboardGoals.length > 0 && (
-        <section className="section">
-          <div className="section-title"><h2>Your goals <span>{dashboardGoals.length}</span></h2></div>
-          <div className="dashboard-goals">
-            {dashboardGoals.map((goal) => (
-              <article className={goal.urgency === 'Urgent' ? 'dashboard-goal urgent' : 'dashboard-goal'} key={goal.id}>
-                <div>
-                  <span>{goal.urgency}</span>
-                  <h3>{goal.title}</h3>
-                  <p>Due {new Date(`${goal.date}T${goal.time}`).toLocaleDateString('en', { month: 'short', day: 'numeric' })}</p>
-                </div>
-                <strong>{goal.progress}%</strong>
-                <div className="dashboard-goal__progress"><i style={{ width: `${goal.progress}%` }} /></div>
-              </article>
-            ))}
-          </div>
-        </section>
-      )}
       <section className="productivity">
         <div><span>WEEKLY PRODUCTIVITY</span><h2>{productivity}%</h2><p>Updates as you complete items</p></div>
         <div className="ring" style={{ background: `conic-gradient(var(--primary) ${productivity}%, rgba(98,89,223,.15) 0)` }}><b>{productivity}</b></div>
