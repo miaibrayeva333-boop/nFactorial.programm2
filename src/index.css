@@ -249,7 +249,7 @@ h1, h2, h3, p { margin-top: 0; }
 .ai-avatar, .ai-welcome__mark { display: grid; place-items: center; width: 42px; height: 42px; border-radius: 14px; color: #fff; background: linear-gradient(135deg, #6259df, #8c82f0); box-shadow: 0 7px 16px rgba(98, 89, 223, .25); }
 .mascot-avatar { object-fit: cover; border: 0; }
 .ai-chat__header > div:last-child { flex: 1; }.ai-chat__header h2 { margin: 0 0 3px; font-size: 15px; }.ai-chat__header p { display: flex; align-items: center; gap: 5px; margin: 0; color: var(--muted); font-size: 10px; }.ai-chat__header p i { width: 6px; height: 6px; border-radius: 50%; background: #4ebd84; }
-.ai-messages { width: min(100%, 800px); margin: 0 auto; overflow-y: auto; padding: 28px 22px 150px; }
+.ai-messages { width: min(100%, 800px); margin: 0 auto; overflow-y: auto; padding: 28px 22px 185px; }
 .ai-welcome { display: grid; place-items: center; min-height: 100%; align-content: center; padding-bottom: 20px; text-align: center; }
 .ai-welcome__mark { width: 58px; height: 58px; margin-bottom: 20px; border-radius: 19px; font-size: 24px; }
 .ai-mascot-large { width: 112px; height: 112px; margin-bottom: 13px; border-radius: 34px; object-fit: cover; box-shadow: 0 14px 35px rgba(71, 62, 187, .2); }
@@ -267,6 +267,7 @@ h1, h2, h3, p { margin-top: 0; }
 .ai-composer { position: absolute; right: 0; bottom: 0; left: 0; padding: 10px max(16px, calc((100vw - 760px) / 2)) 16px; background: linear-gradient(transparent, var(--surface) 20%); }
 .chat-suggestions { display: flex; justify-content: center; gap: 8px; overflow-x: auto; padding: 16px 0 9px; }.chat-suggestions button { padding: 9px 12px; border: 1px solid var(--line); border-radius: 13px; color: var(--text); background: var(--surface); box-shadow: 0 5px 16px rgba(20, 20, 50, .05); font-size: 11px; white-space: nowrap; }
 .chat-input { display: flex; gap: 9px; padding: 9px; border: 1px solid var(--line); border-radius: 20px; background: var(--surface); box-shadow: 0 9px 30px rgba(30, 30, 60, .12); }.chat-input input { flex: 1; min-width: 0; padding: 10px 12px; border: 0; outline: 0; color: var(--text); background: transparent; font-size: 14px; }.chat-input button { width: 40px; height: 40px; border: 0; border-radius: 13px; color: #fff; background: var(--primary); font-size: 20px; font-weight: 700; }.chat-input button:disabled { opacity: .25; cursor: default; }
+.ai-food-tools { display: flex; justify-content: center; gap: 8px; margin-top: 8px; }.ai-food-tools button { padding: 8px 11px; border: 1px solid var(--line); border-radius: 11px; color: var(--text); background: var(--surface); font-size: 10px; font-weight: 700; }.ai-food-tools span { margin-right: 5px; color: var(--primary); }
 .ai-composer > small { display: block; margin-top: 7px; color: var(--muted); text-align: center; font-size: 9px; }
 .calendar-header { margin-bottom: 18px; }
 .calendar-card { padding: 20px; border: 1px solid var(--line); border-radius: 25px; background: var(--surface); }
@@ -342,7 +343,7 @@ h1, h2, h3, p { margin-top: 0; }
   .ai-button { right: 16px; }
   .app-logo { width: 48px; height: 48px; border-radius: 15px; }
   .ai-chat__header { padding: 12px 14px; }
-  .ai-messages { padding: 22px 16px 145px; }
+  .ai-messages { padding: 22px 16px 180px; }
   .ai-composer { padding: 8px 12px 12px; }
   .chat-suggestions { justify-content: flex-start; }
   .calendar-card { padding: 14px 10px; }

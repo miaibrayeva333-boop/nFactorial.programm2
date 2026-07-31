@@ -1,9 +1,18 @@
-import { FormEvent, useEffect, useRef, useState } from 'react';
+import { FormEvent, lazy, Suspense, useEffect, useRef, useState } from 'react';
 import { isSupabaseConfigured, supabase } from '../lib/supabase';
+import type { ScannedFood } from './BarcodeScanner';
+
+const BarcodeScanner = lazy(() =>
+  import('./BarcodeScanner').then((module) => ({ default: module.BarcodeScanner })),
+);
+const PhotoFoodScanner = lazy(() =>
+  import('./PhotoFoodScanner').then((module) => ({ default: module.PhotoFoodScanner })),
+);
 
 type Message = { id: number; role: 'assistant' | 'user'; text: string };
 const system = `You are Axis, the concise and friendly Smart Axis personal organization assistant.
 Help with planning, prioritizing, schedules, free time, breaks, habits, emotional wellbeing, and unfinished tasks.
+Help identify foods and explain estimated calories and macronutrients without presenting estimates as medical facts.
 For emotional support, listen without judgment, validate feelings without diagnosing, ask one gentle question at a time,
 and suggest small grounded coping steps. Do not present yourself as a therapist or replace professional care.
 If someone may be in immediate danger, encourage them to contact local emergency services or a trusted person now.
@@ -27,6 +36,7 @@ export function AiChat() {
   ]);
   const [question, setQuestion] = useState('');
   const [loading, setLoading] = useState(false);
+  const [foodTool, setFoodTool] = useState<'barcode' | 'photo' | null>(null);
   const endRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => endRef.current?.scrollIntoView({ behavior: 'smooth' }), [messages, loading]);
@@ -68,6 +78,15 @@ export function AiChat() {
   function submit(event: FormEvent) {
     event.preventDefault();
     void send(question);
+  }
+
+  function showFoodEstimate(food: ScannedFood) {
+    setFoodTool(null);
+    setMessages((current) => [...current, {
+      id: Date.now(),
+      role: 'assistant',
+      text: `${food.name}\n\nEstimated calories: ${food.calories} kcal\nProtein: ${food.protein} g · Carbs: ${food.carbs} g · Fat: ${food.fat} g\n\nThis is an estimate, so check the package label or portion size when possible.`,
+    }]);
   }
 
   return (
@@ -118,9 +137,19 @@ export function AiChat() {
             />
             <button aria-label="Send message" disabled={!question.trim() || loading} type="submit">↑</button>
           </form>
+          <div className="ai-food-tools">
+            <button onClick={() => setFoodTool('barcode')} type="button"><span>▥</span> Scan food barcode</button>
+            <button onClick={() => setFoodTool('photo')} type="button"><span>✦</span> Take a food photo</button>
+          </div>
           <small>Axis can make mistakes. Check important information.</small>
         </footer>
       </section>
+      {foodTool === 'barcode' && (
+        <Suspense fallback={null}><BarcodeScanner onClose={() => setFoodTool(null)} onFound={showFoodEstimate} /></Suspense>
+      )}
+      {foodTool === 'photo' && (
+        <Suspense fallback={null}><PhotoFoodScanner onClose={() => setFoodTool(null)} onFound={showFoodEstimate} /></Suspense>
+      )}
     </div>
   );
 }
