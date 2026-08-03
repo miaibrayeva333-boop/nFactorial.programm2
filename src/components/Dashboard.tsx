@@ -1,7 +1,6 @@
 import { useEffect, useMemo, useState } from 'react';
 import { DailyTrackers } from './DailyTrackers';
 import { loadTasks, saveTasks } from '../lib/tasks';
-import { XpBadge } from './XpBadge';
 
 const completionPoems = [
   ['One brave step, one task now done,', 'You made your way toward the sun.'],
@@ -69,7 +68,6 @@ export function Dashboard() {
             <h1>{greeting}, {firstName} <span>👋</span></h1>
           </div>
         </div>
-        <XpBadge />
       </header>
 
       <section className={topPriority.done ? 'priority-card completed' : 'priority-card'}>
