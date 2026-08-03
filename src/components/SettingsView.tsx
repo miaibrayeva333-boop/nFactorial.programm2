@@ -18,7 +18,6 @@ export function SettingsView({ dark, onTheme, user }: Props) {
     () => localStorage.getItem('smart-life-notifications') !== 'false',
   );
   const [message, setMessage] = useState('');
-  const [financeOpen, setFinanceOpen] = useState(false);
   const [gender, setGender] = useState<Gender>(() => getGender() ?? 'prefer-not-to-say');
 
   function chooseLanguage(value: Language) {
@@ -85,11 +84,6 @@ export function SettingsView({ dark, onTheme, user }: Props) {
               <option value="prefer-not-to-say">Prefer not to say</option>
             </select>
           </div>
-          <button className="setting-row" onClick={() => setFinanceOpen(true)} type="button">
-            <span className="setting-icon">▣</span>
-            <span><strong>Connected finances</strong><small>Bank accounts and credit cards</small></span>
-            <em>›</em>
-          </button>
         </div>
       </section>
 
@@ -106,7 +100,6 @@ export function SettingsView({ dark, onTheme, user }: Props) {
       </section>
 
       <button className="sign-out-button" onClick={() => void supabase.auth.signOut()} type="button">Sign out</button>
-      {financeOpen && <FinanceConnection onClose={() => setFinanceOpen(false)} />}
       {editingName && (
         <NameEditor
           currentName={name}
@@ -120,31 +113,6 @@ export function SettingsView({ dark, onTheme, user }: Props) {
         />
       )}
       {message && <button className="toast" onClick={() => setMessage('')} type="button">{message}<span>×</span></button>}
-    </div>
-  );
-}
-
-function FinanceConnection({ onClose }: { onClose: () => void }) {
-  const [notice, setNotice] = useState(false);
-  return (
-    <div className="modal-backdrop" onMouseDown={onClose}>
-      <section className="tracker-modal finance-connection" onMouseDown={(event) => event.stopPropagation()}>
-        <button className="modal-close" onClick={onClose} type="button">×</button>
-        <div className="finance-card">
-          <span>SMART AXIS</span><b>•••• •••• •••• 2480</b>
-          <div><small>CONNECTED FINANCES</small><strong>Secure bank sync</strong></div>
-        </div>
-        <h2>Track money automatically</h2>
-        <p>Connect checking, savings, or credit accounts through a secure financial-data provider. Smart Axis never asks for your card number or bank password.</p>
-        <ul className="finance-benefits">
-          <li><span>✓</span> Automatic transaction updates</li>
-          <li><span>✓</span> Spending categories and budget totals</li>
-          <li><span>✓</span> Read-only access—you cannot move money</li>
-        </ul>
-        <button className="connect-finance-button" onClick={() => setNotice(true)} type="button">Connect bank or credit card</button>
-        {notice && <div className="finance-notice">Plaid server credentials must be configured before secure connection can open.</div>}
-        <small className="finance-privacy">Do not enter card details directly into Smart Axis.</small>
-      </section>
     </div>
   );
 }

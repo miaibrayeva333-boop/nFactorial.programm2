@@ -27,7 +27,7 @@ export function AppIntroduction({ onComplete }: { onComplete: () => void }) {
         <p>Plan tasks, check your calendar, talk with your AI helper, and understand your health without the clutter.</p>
         <div className="intro-features">
           <article><span>✓</span><div><strong>Stay organized</strong><small>Tasks and calendar together.</small></div></article>
-          <article><span>♡</span><div><strong>Know your rhythm</strong><small>Health, nutrition, and daily steps.</small></div></article>
+          <article><span>♡</span><div><strong>Know your rhythm</strong><small>Health, nutrition, and daily habits.</small></div></article>
           <article><span>✦</span><div><strong>Get thoughtful help</strong><small>Your AI assistant is ready when you need it.</small></div></article>
         </div>
       </section>

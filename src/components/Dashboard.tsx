@@ -1,6 +1,5 @@
 import { useEffect, useMemo, useState } from 'react';
 import { DailyTrackers } from './DailyTrackers';
-import { StepCounter } from './StepCounter';
 import { loadTasks, saveTasks } from '../lib/tasks';
 
 const completionPoems = [
@@ -95,7 +94,6 @@ export function Dashboard() {
 
       <section className="section">
         <div className="section-title"><h2>Your day</h2></div>
-        <StepCounter />
         <DailyTrackers />
       </section>
 
