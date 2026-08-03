@@ -1,3 +1,6 @@
+import { Link } from 'wouter';
+import { useI18n } from '../lib/i18n';
+
 export type AppTab = 'Dashboard' | 'Tasks' | 'Calendar' | 'Health' | 'AI' | 'Settings';
 
 const tabs: { label: AppTab; icon: string }[] = [
@@ -15,11 +18,13 @@ type Props = {
 };
 
 export function BottomNavigation({ active, onChange }: Props) {
+  const { t } = useI18n();
+  const labels: Record<AppTab, string> = { Dashboard: t('dashboard'), Tasks: t('tasks'), Calendar: t('calendar'), Health: t('health'), AI: 'AI', Settings: t('settings') };
   return (
     <nav className="bottom-nav" aria-label="Main navigation">
       <Link className="nav-item" href="/leaderboard">
         <span>🏆</span>
-        <small>Leaders</small>
+        <small>{t('leaders')}</small>
       </Link>
       {tabs.map((tab) => (
         <button
@@ -29,10 +34,9 @@ export function BottomNavigation({ active, onChange }: Props) {
           type="button"
         >
           <span>{tab.icon}</span>
-          <small>{tab.label}</small>
+          <small>{labels[tab.label]}</small>
         </button>
       ))}
     </nav>
   );
 }
-import { Link } from 'wouter';

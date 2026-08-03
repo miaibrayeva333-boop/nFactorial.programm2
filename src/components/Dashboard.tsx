@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useState } from 'react';
 import { DailyTrackers } from './DailyTrackers';
 import { loadTasks, saveTasks } from '../lib/tasks';
+import { useI18n } from '../lib/i18n';
 
 const completionPoems = [
   ['One brave step, one task now done,', 'You made your way toward the sun.'],
@@ -10,6 +11,7 @@ const completionPoems = [
 ];
 
 export function Dashboard() {
+  const { t } = useI18n();
   const [tasks, setTasks] = useState(loadTasks);
   const [message, setMessage] = useState('');
   const [revision, setRevision] = useState(0);
@@ -19,7 +21,7 @@ export function Dashboard() {
   const name = localStorage.getItem('smart-life-name') ?? 'Alex Morgan';
   const firstName = name.trim().split(/\s+/)[0];
   const hour = new Date().getHours();
-  const greeting = hour < 12 ? 'Good morning' : hour < 18 ? 'Good afternoon' : 'Good evening';
+  const greeting = hour < 12 ? t('goodMorning') : hour < 18 ? t('goodAfternoon') : t('goodEvening');
   const today = new Intl.DateTimeFormat('en', {
     weekday: 'long', month: 'long', day: 'numeric',
   }).format(new Date());
@@ -72,7 +74,7 @@ export function Dashboard() {
 
       <section className={topPriority.done ? 'priority-card completed' : 'priority-card'}>
         <div className="priority-card__top">
-          <span className="priority-label">{topPriority.done ? '✓ FINISHED' : 'TODAY’S TOP PRIORITY'}</span>
+          <span className="priority-label">{topPriority.done ? `✓ ${t('finished')}` : t('topPriority')}</span>
           <button onClick={() => setMessage('Priority options opened')} type="button">•••</button>
         </div>
         {!topPriority.done && <h2>{topPriority.title}</h2>}
@@ -93,12 +95,12 @@ export function Dashboard() {
       </section>
 
       <section className="section">
-        <div className="section-title"><h2>Your day</h2></div>
+        <div className="section-title"><h2>{t('yourDay')}</h2></div>
         <DailyTrackers />
       </section>
 
       <section className="section">
-        <div className="section-title"><h2>Today’s tasks <span>{tasks.length}</span></h2></div>
+        <div className="section-title"><h2>{t('todaysTasks')} <span>{tasks.length}</span></h2></div>
         <div className="task-list">
           {tasks.map((task) => (
             <article className={task.priority === 'High' ? 'task-row high-priority' : 'task-row'} key={task.id}>
@@ -120,7 +122,7 @@ export function Dashboard() {
       </section>
 
       <section className="productivity">
-        <div><span>WEEKLY PRODUCTIVITY</span><h2>{productivity}%</h2><p>Updates as you complete items</p></div>
+        <div><span>{t('weeklyProductivity')}</span><h2>{productivity}%</h2><p>{t('updates')}</p></div>
         <div className="ring" style={{ background: `conic-gradient(var(--primary) ${productivity}%, rgba(98,89,223,.15) 0)` }}><b>{productivity}</b></div>
       </section>
       {message && <button className="toast" onClick={() => setMessage('')} type="button">{message}<span>×</span></button>}
