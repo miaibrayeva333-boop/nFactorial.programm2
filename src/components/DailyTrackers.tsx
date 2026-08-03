@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import { BudgetEditor, type BudgetTransaction } from './BudgetEditor';
+import { todayKey } from '../lib/tasks';
 
 type Tracker = 'water' | 'habits' | 'budget' | 'mood';
 type Metrics = { water: number; habits: boolean[]; budget: number; mood: string; budgetHistory?: BudgetTransaction[] };
@@ -20,17 +21,21 @@ const moods = [
   ['Frustrated', '😤'], ['Angry', '😠'], ['Sad', '😢'],
 ];
 
-export function DailyTrackers() {
+export function DailyTrackers({ dateKey }: { dateKey: string }) {
   const [metrics, setMetrics] = useState<Metrics>(() => {
-    const saved = localStorage.getItem('smart-life-metrics');
+    const saved = localStorage.getItem(`smart-life-metrics-${dateKey}`)
+      ?? (dateKey === todayKey() ? localStorage.getItem('smart-life-metrics') : null);
     return saved ? JSON.parse(saved) as Metrics : defaults;
   });
   const [open, setOpen] = useState<Tracker | null>(null);
 
   useEffect(() => {
-    localStorage.setItem('smart-life-metrics', JSON.stringify(metrics));
+    localStorage.setItem(`smart-life-metrics-${dateKey}`, JSON.stringify(metrics));
+    if (dateKey === todayKey()) {
+      localStorage.setItem('smart-life-metrics', JSON.stringify(metrics));
+    }
     window.dispatchEvent(new Event('smart-life-progress'));
-  }, [metrics]);
+  }, [dateKey, metrics]);
 
   const completed = metrics.habits.filter(Boolean).length;
   return (

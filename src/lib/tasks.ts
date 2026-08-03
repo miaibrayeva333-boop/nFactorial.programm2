@@ -16,17 +16,21 @@ export const defaultTasks: SmartTask[] = [
   { id: 'budget', title: 'Review monthly budget', category: 'Finance', meta: 'Finance · 6:00 PM', priority: 'Low', done: false, color: 'orange' },
 ];
 
-const taskDateKey = 'smart-life-tasks-date';
-const today = () => new Date().toISOString().slice(0, 10);
+export const dateKey = (date: Date) => {
+  const year = date.getFullYear();
+  const month = String(date.getMonth() + 1).padStart(2, '0');
+  const day = String(date.getDate()).padStart(2, '0');
+  return `${year}-${month}-${day}`;
+};
+export const todayKey = () => dateKey(new Date());
+const storageKey = (date: string) => `smart-life-tasks-${date}`;
 
-export function loadTasks(): SmartTask[] {
-  const saved = localStorage.getItem('smart-life-tasks');
-  if (saved) {
-    const tasks = JSON.parse(saved) as SmartTask[];
-    return localStorage.getItem(taskDateKey) === today()
-      ? tasks
-      : tasks.map((task) => ({ ...task, done: false }));
-  }
+export function loadTasks(date = todayKey()): SmartTask[] {
+  const dated = localStorage.getItem(storageKey(date));
+  if (dated) return JSON.parse(dated) as SmartTask[];
+
+  const saved = date === todayKey() ? localStorage.getItem('smart-life-tasks') : null;
+  if (saved) return JSON.parse(saved) as SmartTask[];
 
   const legacy = localStorage.getItem('smart-life-dashboard-tasks');
   if (legacy) {
@@ -41,15 +45,15 @@ export function loadTasks(): SmartTask[] {
       color: task.color ?? 'purple',
     }));
   }
-  return defaultTasks;
+  return defaultTasks.map((task) => ({ ...task, done: false }));
 }
 
-export function saveTasks(tasks: SmartTask[]) {
-  localStorage.setItem('smart-life-tasks', JSON.stringify(tasks));
-  localStorage.setItem(taskDateKey, today());
+export function saveTasks(tasks: SmartTask[], date = todayKey()) {
+  localStorage.setItem(storageKey(date), JSON.stringify(tasks));
+  if (date === todayKey()) localStorage.setItem('smart-life-tasks', JSON.stringify(tasks));
   window.dispatchEvent(new Event('smart-life-tasks'));
   window.dispatchEvent(new Event('smart-life-progress'));
-  if (tasks.length > 0 && tasks.every((task) => task.done)) {
+  if (date === todayKey() && tasks.length > 0 && tasks.every((task) => task.done)) {
     void awardXp('daily_tasks').catch(() => undefined);
   }
 }

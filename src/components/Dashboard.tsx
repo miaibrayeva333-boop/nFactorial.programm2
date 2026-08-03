@@ -1,8 +1,8 @@
 import { useEffect, useMemo, useState } from 'react';
 import { DailyTrackers } from './DailyTrackers';
-import { loadTasks, saveTasks } from '../lib/tasks';
+import { dateKey, loadTasks, saveTasks } from '../lib/tasks';
 import { useI18n } from '../lib/i18n';
-
+import { DashboardDatePicker } from './DashboardDatePicker';
 const completionPoems = [
   ['One brave step, one task now done,', 'You made your way toward the sun.'],
   ['The list grew quiet, the moment grew bright,', 'You kept your promise and finished it right.'],
@@ -11,8 +11,11 @@ const completionPoems = [
 ];
 
 export function Dashboard() {
-  const { t } = useI18n();
-  const [tasks, setTasks] = useState(loadTasks);
+  const { language, t } = useI18n();
+  const [selectedDate, setSelectedDate] = useState(() => new Date());
+  const selectedKey = dateKey(selectedDate);
+  const [dayTasks, setDayTasks] = useState(() => ({ date: selectedKey, tasks: loadTasks(selectedKey) }));
+  const tasks = dayTasks.tasks;
   const [message, setMessage] = useState('');
   const [revision, setRevision] = useState(0);
   const [priorityWins, setPriorityWins] = useState(
@@ -22,14 +25,15 @@ export function Dashboard() {
   const firstName = name.trim().split(/\s+/)[0];
   const hour = new Date().getHours();
   const greeting = hour < 12 ? t('goodMorning') : hour < 18 ? t('goodAfternoon') : t('goodEvening');
-  const today = new Intl.DateTimeFormat('en', {
+  const locale = language === 'Русский' ? 'ru' : language === 'Қазақша' ? 'kk' : 'en';
+  const displayedDate = new Intl.DateTimeFormat(locale, {
     weekday: 'long', month: 'long', day: 'numeric',
-  }).format(new Date());
+  }).format(selectedDate);
   const topPriority = tasks[0];
   const activePoem = completionPoems[Math.max(0, priorityWins - 1) % completionPoems.length];
 
   function toggleTask(title: string) {
-    setTasks(tasks.map((task) => {
+    setDayTasks({ date: selectedKey, tasks: tasks.map((task) => {
       if (task.title !== title) return task;
       if (task === topPriority && !task.done) {
         const nextWins = priorityWins + 1;
@@ -37,12 +41,24 @@ export function Dashboard() {
         localStorage.setItem('smart-life-priority-wins', String(nextWins));
       }
       return { ...task, done: !task.done };
-    }));
+    }) });
+  }
+
+  function chooseDate(date: Date) {
+    const key = dateKey(date);
+    setSelectedDate(date);
+    setDayTasks({ date: key, tasks: loadTasks(key) });
+  }
+
+  function moveDay(offset: number) {
+    const next = new Date(selectedDate);
+    next.setDate(next.getDate() + offset);
+    chooseDate(next);
   }
 
   useEffect(() => {
-    saveTasks(tasks);
-  }, [tasks]);
+    saveTasks(dayTasks.tasks, dayTasks.date);
+  }, [dayTasks]);
 
   useEffect(() => {
     const update = () => setRevision((value) => value + 1);
@@ -51,14 +67,15 @@ export function Dashboard() {
   }, []);
 
   const productivity = useMemo(() => {
-    const savedMetrics = localStorage.getItem('smart-life-metrics');
+    const savedMetrics = localStorage.getItem(`smart-life-metrics-${selectedKey}`)
+      ?? (selectedKey === dateKey(new Date()) ? localStorage.getItem('smart-life-metrics') : null);
     const habits = savedMetrics
       ? (JSON.parse(savedMetrics) as { habits?: boolean[] }).habits ?? []
       : [];
     const rates = [tasks.filter((task) => task.done).length / tasks.length];
     if (habits.length) rates.push(habits.filter(Boolean).length / habits.length);
     return Math.round(rates.reduce((sum, rate) => sum + rate, 0) / rates.length * 100);
-  }, [revision, tasks]);
+  }, [revision, selectedKey, tasks]);
 
   return (
     <div className="dashboard">
@@ -66,11 +83,13 @@ export function Dashboard() {
         <div className="brand-greeting">
           <img className="app-logo" src="/assets/smart-life-logo.png" alt="Smart Axis logo" />
           <div>
-            <p className="eyebrow">{today}</p>
+            <p className="eyebrow">{displayedDate}</p>
             <h1>{greeting}, {firstName} <span>👋</span></h1>
           </div>
         </div>
       </header>
+
+      <DashboardDatePicker date={selectedKey} onChange={chooseDate} onMove={moveDay} />
 
       <section className={topPriority.done ? 'priority-card completed' : 'priority-card'}>
         <div className="priority-card__top">
@@ -96,7 +115,7 @@ export function Dashboard() {
 
       <section className="section">
         <div className="section-title"><h2>{t('yourDay')}</h2></div>
-        <DailyTrackers />
+        <DailyTrackers dateKey={selectedKey} key={selectedKey} />
       </section>
 
       <section className="section">

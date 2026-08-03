@@ -9,7 +9,7 @@ const translations = {
     notifications: 'Notifications', reminders: 'Reminders and daily summary', language: 'Language', chooseLanguage: 'Choose the app language', gender: 'Gender', account: 'Account',
     calendarSync: 'Calendar sync', connectCalendar: 'Connect Google Calendar', privacy: 'Privacy & data', manageInfo: 'Manage your information', signOut: 'Sign out',
     yourDay: 'Your day', todaysTasks: "Today's tasks", weeklyProductivity: 'WEEKLY PRODUCTIVITY', updates: 'Updates as you complete items',
-    goodMorning: 'Good morning', goodAfternoon: 'Good afternoon', goodEvening: 'Good evening', topPriority: "TODAY'S TOP PRIORITY", finished: 'FINISHED',
+    goodMorning: 'Good morning', goodAfternoon: 'Good afternoon', goodEvening: 'Good evening', topPriority: "TODAY'S TOP PRIORITY", finished: 'FINISHED', today: 'Today',
   },
   Русский: {
     leaders: 'Лидеры', tasks: 'Задачи', calendar: 'Календарь', dashboard: 'Главная', health: 'Здоровье', settings: 'Настройки',
@@ -17,7 +17,7 @@ const translations = {
     notifications: 'Уведомления', reminders: 'Напоминания и итоги дня', language: 'Язык', chooseLanguage: 'Выберите язык приложения', gender: 'Пол', account: 'Аккаунт',
     calendarSync: 'Синхронизация календаря', connectCalendar: 'Подключить Google Календарь', privacy: 'Данные и приватность', manageInfo: 'Управление информацией', signOut: 'Выйти',
     yourDay: 'Ваш день', todaysTasks: 'Задачи на сегодня', weeklyProductivity: 'ПРОДУКТИВНОСТЬ ЗА НЕДЕЛЮ', updates: 'Обновляется по мере выполнения',
-    goodMorning: 'Доброе утро', goodAfternoon: 'Добрый день', goodEvening: 'Добрый вечер', topPriority: 'ГЛАВНАЯ ЗАДАЧА ДНЯ', finished: 'ГОТОВО',
+    goodMorning: 'Доброе утро', goodAfternoon: 'Добрый день', goodEvening: 'Добрый вечер', topPriority: 'ГЛАВНАЯ ЗАДАЧА ДНЯ', finished: 'ГОТОВО', today: 'Сегодня',
   },
   Қазақша: {
     leaders: 'Көшбасшылар', tasks: 'Тапсырмалар', calendar: 'Күнтізбе', dashboard: 'Басты бет', health: 'Денсаулық', settings: 'Баптаулар',
@@ -25,7 +25,7 @@ const translations = {
     notifications: 'Хабарландырулар', reminders: 'Еске салулар және күн қорытындысы', language: 'Тіл', chooseLanguage: 'Қолданба тілін таңдаңыз', gender: 'Жыныс', account: 'Аккаунт',
     calendarSync: 'Күнтізбені синхрондау', connectCalendar: 'Google Күнтізбесін қосу', privacy: 'Құпиялылық және деректер', manageInfo: 'Ақпаратты басқару', signOut: 'Шығу',
     yourDay: 'Сіздің күніңіз', todaysTasks: 'Бүгінгі тапсырмалар', weeklyProductivity: 'АПТАЛЫҚ ӨНІМДІЛІК', updates: 'Орындалған сайын жаңарады',
-    goodMorning: 'Қайырлы таң', goodAfternoon: 'Қайырлы күн', goodEvening: 'Қайырлы кеш', topPriority: 'БҮГІНГІ БАСТЫ МАҚСАТ', finished: 'ДАЙЫН',
+    goodMorning: 'Қайырлы таң', goodAfternoon: 'Қайырлы күн', goodEvening: 'Қайырлы кеш', topPriority: 'БҮГІНГІ БАСТЫ МАҚСАТ', finished: 'ДАЙЫН', today: 'Бүгін',
   },
 } as const;
 
