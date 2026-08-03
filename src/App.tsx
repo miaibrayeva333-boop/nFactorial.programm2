@@ -3,6 +3,7 @@ import { HomePage } from './pages/HomePage';
 import { NotFoundPage } from './pages/NotFoundPage';
 import { LeaderboardPage } from './pages/LeaderboardPage';
 import { I18nProvider } from './lib/i18n';
+import { GamePage } from './pages/GamePage';
 
 // Здесь живут только маршруты. Сами экраны складывай в src/pages/.
 export default function App() {
@@ -10,6 +11,7 @@ export default function App() {
     <I18nProvider><Switch>
       <Route path="/" component={HomePage} />
       <Route path="/leaderboard" component={LeaderboardPage} />
+      <Route path="/game" component={GamePage} />
       <Route component={NotFoundPage} />
     </Switch></I18nProvider>
   );

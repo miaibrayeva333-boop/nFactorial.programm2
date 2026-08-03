@@ -1,0 +1,9 @@
+{
+  "name": "Smart Axis",
+  "short_name": "Smart Axis",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#f7f7fc",
+  "theme_color": "#18b7aa",
+  "icons": [{ "src": "/assets/smart-life-logo.png", "sizes": "512x512", "type": "image/png" }]
+}
