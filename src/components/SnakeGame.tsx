@@ -8,6 +8,7 @@ export function SnakeGame() {
   const [playing, setPlaying] = useState(false);
   const [best, setBest] = useState(() => Number(localStorage.getItem('smart-axis-snake-best') ?? 0));
   const direction = useRef(game.direction);
+  const touchStart = useRef<{ x: number; y: number } | null>(null);
 
   function turn(next: Direction) {
     if (!canTurn(direction.current, next)) return;
@@ -21,6 +22,16 @@ export function SnakeGame() {
     direction.current = next.direction;
     setGame(next);
     setPlaying(true);
+  }
+
+  function finishSwipe(x: number, y: number) {
+    if (!touchStart.current) return;
+    const horizontal = x - touchStart.current.x;
+    const vertical = y - touchStart.current.y;
+    touchStart.current = null;
+    if (Math.max(Math.abs(horizontal), Math.abs(vertical)) < 20) return;
+    if (Math.abs(horizontal) > Math.abs(vertical)) turn(horizontal > 0 ? 'right' : 'left');
+    else turn(vertical > 0 ? 'down' : 'up');
   }
 
   useEffect(() => {
@@ -52,7 +63,12 @@ export function SnakeGame() {
         <span>Score <b>{game.score}</b></span><span>Best <b>{best}</b></span>
         <button onClick={restart} type="button">↻ Restart</button>
       </div>
-      <div className="snake-board" style={{ gridTemplateColumns: `repeat(${gridSize}, 1fr)` }}>
+      <div
+        className="snake-board"
+        onTouchEnd={(event) => finishSwipe(event.changedTouches[0].clientX, event.changedTouches[0].clientY)}
+        onTouchStart={(event) => { touchStart.current = { x: event.touches[0].clientX, y: event.touches[0].clientY }; }}
+        style={{ gridTemplateColumns: `repeat(${gridSize}, 1fr)` }}
+      >
         {Array.from({ length: gridSize * gridSize }, (_, index) => {
           const point = { x: index % gridSize, y: Math.floor(index / gridSize) };
           const snakeIndex = game.snake.findIndex((part) => part.x === point.x && part.y === point.y);
@@ -68,7 +84,7 @@ export function SnakeGame() {
         <button onClick={() => turn('right')} type="button">→</button>
         <button onClick={() => turn('down')} type="button">↓</button>
       </div>
-      <small>Use arrow keys, WASD, or the buttons. Your best score is saved on this device.</small>
+      <small>Swipe the board, use the phone buttons, or play with arrow keys and WASD. Your best score is saved on this device.</small>
     </section>
   );
 }
