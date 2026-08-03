@@ -32,7 +32,7 @@ export function BottomNavigation({ active, onChange }: Props) {
       </Link>
       {tabs.map((tab) => (
         <button
-          className={active === tab.label ? 'nav-item active' : 'nav-item'}
+          className={`${active === tab.label ? 'nav-item active' : 'nav-item'}${tab.label === 'Dashboard' ? ' dashboard-nav' : ''}`}
           key={tab.label}
           onClick={() => onChange(tab.label)}
           type="button"

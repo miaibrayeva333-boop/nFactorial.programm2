@@ -201,6 +201,7 @@ h1, h2, h3, p { margin-top: 0; }
   transform: translateY(-2px);
 }
 .nav-item.active span { color: #fff; background: var(--primary); box-shadow: 0 6px 14px rgba(98, 89, 223, .28); }
+.nav-item.dashboard-nav { position: relative; z-index: 2; color: #fff; border-radius: 22px; background: linear-gradient(135deg, #6259df, #7568ed); box-shadow: 0 10px 25px rgba(98,89,223,.3); transform: translateY(-10px); }.nav-item.dashboard-nav span { width: 48px; height: 42px; color: #fff; background: rgba(255,255,255,.13); font-size: 31px; }.nav-item.dashboard-nav small { color: #fff; font-size: 12px; font-weight: 800; }.nav-item.dashboard-nav:hover, .nav-item.dashboard-nav.active { color: #fff; background: linear-gradient(135deg, #5148cf, #6259df); transform: translateY(-13px) scale(1.03); }.nav-item.dashboard-nav.active span { background: rgba(255,255,255,.2); box-shadow: none; }
 .toast {
   position: fixed; z-index: 8; left: 50%; bottom: 116px; display: flex; align-items: center; gap: 16px;
   width: max-content; max-width: calc(100vw - 32px); padding: 13px 16px; border: 1px solid var(--line);
