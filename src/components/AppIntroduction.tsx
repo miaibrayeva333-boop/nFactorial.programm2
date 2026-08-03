@@ -1,5 +1,7 @@
 import { useState } from 'react';
 import { saveGender, type Gender } from '../lib/profile';
+import { useI18n } from '../lib/i18n';
+import { LanguagePicker } from './LanguagePicker';
 
 const choices: Array<{ value: Gender; label: string }> = [
   { value: 'female', label: 'Female' },
@@ -8,7 +10,15 @@ const choices: Array<{ value: Gender; label: string }> = [
   { value: 'prefer-not-to-say', label: 'Prefer not to say' },
 ];
 
+const introText = {
+  English: ['WELCOME TO SMART AXIS', 'One calm place for your day and wellbeing.', 'Plan tasks, check your calendar, talk with your AI helper, and understand your health without the clutter.', 'A QUICK START', 'How would you describe yourself?', 'This only personalizes health features.', 'Continue to sign in'],
+  Русский: ['ДОБРО ПОЖАЛОВАТЬ В SMART AXIS', 'Спокойное место для ваших дел и самочувствия.', 'Планируйте задачи, проверяйте календарь, общайтесь с ИИ-помощником и следите за здоровьем.', 'БЫСТРЫЙ СТАРТ', 'Как вы себя описываете?', 'Это нужно только для настройки функций здоровья.', 'Перейти ко входу'],
+  Қазақша: ['SMART AXIS-ҚА ҚОШ КЕЛДІҢІЗ', 'Күнделікті істер мен көңіл күйге арналған тыныш орын.', 'Тапсырмаларды жоспарлаңыз, күнтізбені қараңыз, AI көмекшісімен сөйлесіңіз және денсаулықты бақылаңыз.', 'ЖЫЛДАМ БАСТАУ', 'Өзіңізді қалай сипаттайсыз?', 'Бұл тек денсаулық мүмкіндіктерін баптау үшін қажет.', 'Кіруге өту'],
+} as const;
+
 export function AppIntroduction({ onComplete }: { onComplete: () => void }) {
+  const { language } = useI18n();
+  const text = introText[language];
   const [gender, setGender] = useState<Gender | null>(null);
 
   function continueToLogin() {
@@ -20,10 +30,11 @@ export function AppIntroduction({ onComplete }: { onComplete: () => void }) {
   return (
     <main className="intro-page">
       <section className="intro-copy">
+        <LanguagePicker />
         <img src="/assets/smart-life-logo.png" alt="Smart Axis" />
-        <p className="eyebrow">WELCOME TO SMART AXIS</p>
-        <h1>One calm place for your day and wellbeing.</h1>
-        <p>Plan tasks, check your calendar, talk with your AI helper, and understand your health without the clutter.</p>
+        <p className="eyebrow">{text[0]}</p>
+        <h1>{text[1]}</h1>
+        <p>{text[2]}</p>
         <div className="intro-features">
           <article><span>✓</span><div><strong>Stay organized</strong><small>Tasks and calendar together.</small></div></article>
           <article><span>♡</span><div><strong>Know your rhythm</strong><small>Health, nutrition, and daily habits.</small></div></article>
@@ -31,9 +42,9 @@ export function AppIntroduction({ onComplete }: { onComplete: () => void }) {
         </div>
       </section>
       <section className="gender-card">
-        <span className="intro-step">A QUICK START</span>
-        <h2>How would you describe yourself?</h2>
-        <p>This only personalizes health features. Cycle tracking is shown when Female is selected.</p>
+        <span className="intro-step">{text[3]}</span>
+        <h2>{text[4]}</h2>
+        <p>{text[5]}</p>
         <div className="gender-options">
           {choices.map((choice) => (
             <button
@@ -47,7 +58,7 @@ export function AppIntroduction({ onComplete }: { onComplete: () => void }) {
           ))}
         </div>
         <button className="intro-continue" disabled={!gender} onClick={continueToLogin} type="button">
-          Continue to sign in
+          {text[6]}
         </button>
         <small>Your choice stays private on this device.</small>
       </section>

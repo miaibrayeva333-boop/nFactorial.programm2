@@ -1,5 +1,7 @@
 import { FormEvent, useState } from 'react';
 import { awardXp } from '../lib/xp';
+import { getWellbeingSupport } from '../lib/wellbeingAi';
+import { useI18n } from '../lib/i18n';
 
 type CheckIn = {
   id: number;
@@ -8,6 +10,7 @@ type CheckIn = {
   energy: number;
   stress: number;
   note: string;
+  aiSupport?: string;
 };
 
 const moods = [
@@ -16,11 +19,13 @@ const moods = [
 ];
 
 export function EmotionalWellbeing() {
+  const { language } = useI18n();
   const [entries, setEntries] = useState<CheckIn[]>(() => {
     const saved = localStorage.getItem('smart-axis-wellbeing');
     return saved ? JSON.parse(saved) as CheckIn[] : [];
   });
   const [editorOpen, setEditorOpen] = useState(false);
+  const [aiLoading, setAiLoading] = useState(false);
   const latest = entries[0];
 
   function save(entry: CheckIn) {
@@ -29,6 +34,24 @@ export function EmotionalWellbeing() {
     localStorage.setItem('smart-axis-wellbeing', JSON.stringify(next));
     void awardXp('health_checkin').catch(() => undefined);
     setEditorOpen(false);
+    if (needsSupport(entry)) void addAiSupport(entry, next);
+  }
+
+  async function addAiSupport(entry: CheckIn, currentEntries: CheckIn[]) {
+    setAiLoading(true);
+    try {
+      const aiSupport = await getWellbeingSupport(entry, language);
+      const updated = currentEntries.map((item) => item.id === entry.id ? { ...item, aiSupport } : item);
+      setEntries(updated);
+      localStorage.setItem('smart-axis-wellbeing', JSON.stringify(updated));
+    } catch {
+      const fallback = supportFallback[language];
+      const updated = currentEntries.map((item) => item.id === entry.id ? { ...item, aiSupport: fallback } : item);
+      setEntries(updated);
+      localStorage.setItem('smart-axis-wellbeing', JSON.stringify(updated));
+    } finally {
+      setAiLoading(false);
+    }
   }
 
   return (
@@ -43,6 +66,7 @@ export function EmotionalWellbeing() {
         </div>
         <button onClick={() => setEditorOpen(true)} type="button">{latest ? 'Check in again' : 'Start check-in'}</button>
       </section>
+      {(aiLoading || latest?.aiSupport) && <section className="wellbeing-ai-support"><span>✦</span><div><h2>Axie’s gentle support</h2><p>{aiLoading ? 'Thinking about your check-in…' : latest?.aiSupport}</p></div></section>}
       <div className="section-title wellbeing-title"><h2>Recent check-ins</h2></div>
       {entries.length ? (
         <section className="wellbeing-list">
@@ -91,3 +115,14 @@ function WellbeingEditor({ onClose, onSave }: { onClose: () => void; onSave: (en
 function formatDate(date: string) {
   return `Checked in ${new Date(`${date}T12:00:00`).toLocaleDateString('en', { month: 'long', day: 'numeric' })}`;
 }
+
+function needsSupport(entry: CheckIn) {
+  const negativeNote = /sad|anxious|bad|lonely|angry|overwhelmed|scared|груст|тревож|плохо|одинок|злю|қорқ|мұң|жаман|жалғыз|ашу/i.test(entry.note);
+  return ['Tired', 'Anxious', 'Sad'].includes(entry.mood) || entry.stress >= 4 || entry.energy <= 2 || negativeNote;
+}
+
+const supportFallback = {
+  English: 'This sounds like a difficult moment. Try one slow breath, get some water, and consider telling a trusted person how you feel.',
+  Русский: 'Похоже, сейчас вам непросто. Сделайте медленный вдох, выпейте воды и попробуйте рассказать о своих чувствах человеку, которому доверяете.',
+  Қазақша: 'Қазір сізге қиын болып тұрған сияқты. Баяу тыныс алып, су ішіп, сезіміңізді сенетін адамыңызға айтып көріңіз.',
+};

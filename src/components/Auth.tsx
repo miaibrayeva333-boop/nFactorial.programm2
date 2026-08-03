@@ -1,6 +1,7 @@
 import { FormEvent, useState } from 'react';
 import { isSupabaseConfigured, supabase } from '../lib/supabase';
 import { SupabaseSetupMessage } from './SupabaseSetupMessage';
+import { AppPresentation } from './AppPresentation';
 
 export function Auth() {
   const [email, setEmail] = useState('');
@@ -47,6 +48,7 @@ export function Auth() {
 
   return (
     <main className="auth-page">
+      <AppPresentation />
       <section className="auth-card">
         <img className="auth-logo" src="/assets/smart-life-logo.png" alt="Smart Axis" />
         <p className="eyebrow">WELCOME TO SMART AXIS</p>
