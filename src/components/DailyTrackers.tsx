@@ -1,7 +1,8 @@
 import { useEffect, useState } from 'react';
+import { BudgetEditor, type BudgetTransaction } from './BudgetEditor';
 
 type Tracker = 'water' | 'habits' | 'budget' | 'mood';
-type Metrics = { water: number; habits: boolean[]; budget: number; mood: string };
+type Metrics = { water: number; habits: boolean[]; budget: number; mood: string; budgetHistory?: BudgetTransaction[] };
 
 const defaults: Metrics = {
   water: 5,
@@ -69,7 +70,17 @@ export function DailyTrackers() {
                 </div>
               </>
             )}
-            {open === 'budget' && <BudgetEditor balance={metrics.budget} onChange={(budget) => setMetrics({ ...metrics, budget })} />}
+            {open === 'budget' && <BudgetEditor
+              balance={metrics.budget}
+              transactions={metrics.budgetHistory ?? []}
+              onAdd={(transaction) => setMetrics({
+                ...metrics,
+                budget: transaction.type === 'income'
+                  ? metrics.budget + transaction.amount
+                  : Math.max(0, metrics.budget - transaction.amount),
+                budgetHistory: [transaction, ...(metrics.budgetHistory ?? [])].slice(0, 50),
+              })}
+            />}
             {open === 'mood' && (
               <>
                 <div className="tracker-symbol pink">☺</div><h2>How are you feeling?</h2>
@@ -86,22 +97,6 @@ export function DailyTrackers() {
           </section>
         </div>
       )}
-    </>
-  );
-}
-
-function BudgetEditor({ balance, onChange }: { balance: number; onChange: (value: number) => void }) {
-  const [amount, setAmount] = useState('');
-  const value = Number(amount);
-  return (
-    <>
-      <div className="tracker-symbol orange">$</div><h2>Budget</h2>
-      <p>Available balance: <strong>${balance.toLocaleString()}</strong></p>
-      <input className="amount-input" min="0" inputMode="decimal" value={amount} onChange={(event) => setAmount(event.target.value)} placeholder="Enter amount" type="number" />
-      <div className="budget-actions">
-        <button disabled={!value} onClick={() => { onChange(balance + value); setAmount(''); }} type="button">＋ Income</button>
-        <button disabled={!value} onClick={() => { onChange(Math.max(0, balance - value)); setAmount(''); }} type="button">− Expense</button>
-      </div>
     </>
   );
 }
