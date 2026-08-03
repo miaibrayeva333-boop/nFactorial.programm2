@@ -10,14 +10,13 @@ import { HealthHub } from '../components/HealthHub';
 import { Auth } from '../components/Auth';
 import { AppIntroduction } from '../components/AppIntroduction';
 import { supabase } from '../lib/supabase';
-import { hasCompletedIntro } from '../lib/profile';
 
 export function HomePage() {
   const [tab, setTab] = useState<AppTab>('Dashboard');
   const [dark, setDark] = useState(false);
   const [session, setSession] = useState<Session | null>(null);
   const [authReady, setAuthReady] = useState(false);
-  const [introComplete, setIntroComplete] = useState(hasCompletedIntro);
+  const [introComplete, setIntroComplete] = useState(false);
 
   useEffect(() => {
     void supabase.auth.getSession().then(({ data }) => {

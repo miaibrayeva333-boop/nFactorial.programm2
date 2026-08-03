@@ -1,4 +1,5 @@
 import { FormEvent, useState } from 'react';
+import { awardXp } from '../lib/xp';
 
 type CheckIn = {
   id: number;
@@ -26,6 +27,7 @@ export function EmotionalWellbeing() {
     const next = [entry, ...entries].slice(0, 30);
     setEntries(next);
     localStorage.setItem('smart-axis-wellbeing', JSON.stringify(next));
+    void awardXp('health_checkin').catch(() => undefined);
     setEditorOpen(false);
   }
 

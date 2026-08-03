@@ -16,9 +16,17 @@ export const defaultTasks: SmartTask[] = [
   { id: 'budget', title: 'Review monthly budget', category: 'Finance', meta: 'Finance · 6:00 PM', priority: 'Low', done: false, color: 'orange' },
 ];
 
+const taskDateKey = 'smart-life-tasks-date';
+const today = () => new Date().toISOString().slice(0, 10);
+
 export function loadTasks(): SmartTask[] {
   const saved = localStorage.getItem('smart-life-tasks');
-  if (saved) return JSON.parse(saved) as SmartTask[];
+  if (saved) {
+    const tasks = JSON.parse(saved) as SmartTask[];
+    return localStorage.getItem(taskDateKey) === today()
+      ? tasks
+      : tasks.map((task) => ({ ...task, done: false }));
+  }
 
   const legacy = localStorage.getItem('smart-life-dashboard-tasks');
   if (legacy) {
@@ -38,8 +46,12 @@ export function loadTasks(): SmartTask[] {
 
 export function saveTasks(tasks: SmartTask[]) {
   localStorage.setItem('smart-life-tasks', JSON.stringify(tasks));
+  localStorage.setItem(taskDateKey, today());
   window.dispatchEvent(new Event('smart-life-tasks'));
   window.dispatchEvent(new Event('smart-life-progress'));
+  if (tasks.length > 0 && tasks.every((task) => task.done)) {
+    void awardXp('daily_tasks').catch(() => undefined);
+  }
 }
 
 function normalizePriority(priority: SmartTask['priority'] | string | undefined): TaskPriority {
@@ -48,3 +60,4 @@ function normalizePriority(priority: SmartTask['priority'] | string | undefined)
   if (normalized === 'low') return 'Low';
   return 'Medium';
 }
+import { awardXp } from './xp';

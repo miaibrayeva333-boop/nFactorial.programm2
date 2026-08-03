@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { completeIntro, saveGender, type Gender } from '../lib/profile';
+import { saveGender, type Gender } from '../lib/profile';
 
 const choices: Array<{ value: Gender; label: string }> = [
   { value: 'female', label: 'Female' },
@@ -14,7 +14,6 @@ export function AppIntroduction({ onComplete }: { onComplete: () => void }) {
   function continueToLogin() {
     if (!gender) return;
     saveGender(gender);
-    completeIntro();
     onComplete();
   }
 
