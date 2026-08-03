@@ -94,7 +94,6 @@ export function CalendarView() {
       <section className="agenda-section">
         <div className="section-title">
           <h2>{selected.toLocaleDateString('en', { weekday: 'long', month: 'long', day: 'numeric' })}</h2>
-          <button onClick={() => setEditorOpen(true)} type="button">Add event</button>
         </div>
         {selectedEvents.length ? (
           <div className="agenda-list">
