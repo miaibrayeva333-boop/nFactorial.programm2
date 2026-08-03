@@ -7,7 +7,9 @@ export function TasksView() {
   const [editorOpen, setEditorOpen] = useState(false);
   const visible = tasks.filter((task) => filter !== 'High priority' || task.priority === 'High');
 
-  useEffect(() => saveTasks(tasks), [tasks]);
+  useEffect(() => {
+    saveTasks(tasks);
+  }, [tasks]);
 
   return (
     <div className="dashboard tasks-view">
