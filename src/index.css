@@ -182,7 +182,7 @@ h1, h2, h3, p { margin-top: 0; }
 .nav-item {
   flex: 1; display: grid; place-items: center; align-content: center; gap: 6px;
   max-width: 116px; padding: 8px 4px; border: 0; border-radius: 20px;
-  color: var(--muted); background: transparent;
+  color: var(--muted); background: transparent; text-decoration: none;
   transition: color .2s ease, background .2s ease, transform .2s ease;
   pointer-events: auto; touch-action: manipulation;
 }

@@ -17,6 +17,10 @@ type Props = {
 export function BottomNavigation({ active, onChange }: Props) {
   return (
     <nav className="bottom-nav" aria-label="Main navigation">
+      <Link className="nav-item" href="/leaderboard">
+        <span>🏆</span>
+        <small>Leaders</small>
+      </Link>
       {tabs.map((tab) => (
         <button
           className={active === tab.label ? 'nav-item active' : 'nav-item'}
@@ -31,3 +35,4 @@ export function BottomNavigation({ active, onChange }: Props) {
     </nav>
   );
 }
+import { Link } from 'wouter';
