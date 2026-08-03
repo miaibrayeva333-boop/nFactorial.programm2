@@ -1,5 +1,6 @@
 import { FormEvent, useEffect, useRef, useState } from 'react';
 import { isSupabaseConfigured, supabase } from '../lib/supabase';
+import { useI18n } from '../lib/i18n';
 
 type Message = { id: number; role: 'assistant' | 'user'; text: string };
 const system = `You are Axis, the concise and friendly Smart Axis personal organization assistant.
@@ -10,6 +11,7 @@ If someone may be in immediate danger, encourage them to contact local emergency
 Give practical short answers with clear next steps. Never claim to change data you cannot access.`;
 
 export function AiChat() {
+  const { language } = useI18n();
   const name = localStorage.getItem('smart-life-name') ?? 'Alex';
   const firstName = name.trim().split(/\s+/)[0];
   const savedMetrics = localStorage.getItem('smart-life-metrics');
@@ -55,16 +57,22 @@ export function AiChat() {
     const conversation = history.slice(-8)
       .map((message) => `${message.role === 'user' ? 'User' : 'Assistant'}: ${message.text}`)
       .join('\n');
-    const { data, error } = await supabase.functions.invoke('ai', {
-      body: { prompt: conversation, system },
-    });
-    const answer = error
-      ? 'I could not reach the assistant. Please try again in a moment.'
-      : typeof data?.text === 'string'
-        ? data.text
-        : data?.error ?? 'I did not receive an answer. Please try again.';
-    setMessages([...history, { id: Date.now() + 1, role: 'assistant', text: answer }]);
-    setLoading(false);
+    try {
+      const { data, error } = await supabase.functions.invoke('ai', {
+        body: { prompt: conversation, system: `${system}\nRespond in ${language}.` },
+      });
+      const serverError = typeof data?.error === 'string' ? data.error : '';
+      const answer = error
+        ? 'I could not reach the assistant. Please check your connection and try again.'
+        : typeof data?.text === 'string'
+          ? data.text
+          : serverError || 'I did not receive an answer. Please try again.';
+      setMessages([...history, { id: Date.now() + 1, role: 'assistant', text: answer }]);
+    } catch {
+      setMessages([...history, { id: Date.now() + 1, role: 'assistant', text: 'The connection was interrupted. Please try sending your message again.' }]);
+    } finally {
+      setLoading(false);
+    }
   }
 
   function submit(event: FormEvent) {
