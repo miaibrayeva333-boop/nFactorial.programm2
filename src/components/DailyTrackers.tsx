@@ -6,10 +6,10 @@ type Tracker = 'water' | 'habits' | 'budget' | 'mood';
 type Metrics = { water: number; habits: boolean[]; budget: number; mood: string; budgetHistory?: BudgetTransaction[] };
 
 const defaults: Metrics = {
-  water: 5,
-  habits: [true, true, true, true, false, false],
-  budget: 1240,
-  mood: 'Focused',
+  water: 0,
+  habits: [false, false, false, false, false, false],
+  budget: 0,
+  mood: 'Not checked in',
 };
 const habitNames = ['Morning stretch', 'Read', 'Walk', 'Vitamins', 'Meditate', 'No screens late'];
 const moods = [

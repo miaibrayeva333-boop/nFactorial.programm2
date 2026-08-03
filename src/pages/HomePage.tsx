@@ -10,6 +10,7 @@ import { HealthHub } from '../components/HealthHub';
 import { Auth } from '../components/Auth';
 import { AppIntroduction } from '../components/AppIntroduction';
 import { supabase } from '../lib/supabase';
+import { prepareLocalDataForUser } from '../lib/userData';
 
 export function HomePage() {
   const [tab, setTab] = useState<AppTab>('Dashboard');
@@ -24,6 +25,7 @@ export function HomePage() {
       setAuthReady(true);
     });
     const { data } = supabase.auth.onAuthStateChange((_event, nextSession) => {
+      if (nextSession) prepareLocalDataForUser(nextSession.user.id, nextSession.user.created_at);
       setSession(nextSession);
       setAuthReady(true);
       const displayName = nextSession?.user.user_metadata?.full_name;

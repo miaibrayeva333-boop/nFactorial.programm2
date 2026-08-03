@@ -12,7 +12,7 @@ export type SmartTask = {
 
 export const defaultTasks: SmartTask[] = [
   { id: 'presentation', title: 'Finish project presentation', category: 'Work', meta: 'Work · 10:30 AM', priority: 'High', done: false, color: 'purple' },
-  { id: 'workout', title: 'Morning workout', category: 'Wellness', meta: 'Wellness · 7:00 AM', priority: 'Medium', done: true, color: 'green' },
+  { id: 'workout', title: 'Morning workout', category: 'Wellness', meta: 'Wellness · 7:00 AM', priority: 'Medium', done: false, color: 'green' },
   { id: 'budget', title: 'Review monthly budget', category: 'Finance', meta: 'Finance · 6:00 PM', priority: 'Low', done: false, color: 'orange' },
 ];
 

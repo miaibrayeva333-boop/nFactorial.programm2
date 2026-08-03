@@ -27,9 +27,7 @@ export function CalendarView() {
   const [editorOpen, setEditorOpen] = useState(false);
   const [events, setEvents] = useState<CalendarEvent[]>(() => {
     const saved = localStorage.getItem('smart-life-events');
-    return saved ? JSON.parse(saved) as CalendarEvent[] : [
-      { id: 1, title: 'Weekly planning', date: dateKey(today), time: '16:00', color: colors[0], kind: 'Have to do' },
-    ];
+    return saved ? JSON.parse(saved) as CalendarEvent[] : [];
   });
   const holidays = useMemo(() => getHolidays(month.getFullYear()), [month]);
 
