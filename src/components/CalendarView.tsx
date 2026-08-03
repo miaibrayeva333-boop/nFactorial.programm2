@@ -1,4 +1,5 @@
 import { FormEvent, useMemo, useState } from 'react';
+import { getHolidays } from '../lib/holidays';
 
 type CalendarEvent = {
   id: number;
@@ -30,6 +31,7 @@ export function CalendarView() {
       { id: 1, title: 'Weekly planning', date: dateKey(today), time: '16:00', color: colors[0], kind: 'Have to do' },
     ];
   });
+  const holidays = useMemo(() => getHolidays(month.getFullYear()), [month]);
 
   const firstOffset = (month.getDay() + 6) % 7;
   const numberOfDays = new Date(month.getFullYear(), month.getMonth() + 1, 0).getDate();
@@ -41,6 +43,7 @@ export function CalendarView() {
   const selectedEvents = events
     .filter((event) => event.date === dateKey(selected))
     .sort((a, b) => a.time.localeCompare(b.time));
+  const selectedHolidays = holidays.filter((holiday) => holiday.date === dateKey(selected));
 
   function save(next: CalendarEvent[]) {
     setEvents(next);
@@ -76,6 +79,7 @@ export function CalendarView() {
             const isToday = key === dateKey(today);
             const isSelected = key === dateKey(selected);
             const dayEvents = events.filter((event) => event.date === key);
+            const dayHolidays = holidays.filter((holiday) => holiday.date === key);
             return (
               <button
                 className={`calendar-day${isToday ? ' today' : ''}${isSelected ? ' selected' : ''}`}
@@ -84,7 +88,10 @@ export function CalendarView() {
                 type="button"
               >
                 <span>{date.getDate()}</span>
-                <i>{dayEvents.slice(0, 3).map((event) => <b key={event.id} style={{ background: event.color }} />)}</i>
+                <i>
+                  {dayHolidays.length > 0 && <b className="holiday-dot" />}
+                  {dayEvents.slice(0, 2).map((event) => <b key={event.id} style={{ background: event.color }} />)}
+                </i>
               </button>
             );
           })}
@@ -95,8 +102,14 @@ export function CalendarView() {
         <div className="section-title">
           <h2>{selected.toLocaleDateString('en', { weekday: 'long', month: 'long', day: 'numeric' })}</h2>
         </div>
-        {selectedEvents.length ? (
+        {selectedEvents.length || selectedHolidays.length ? (
           <div className="agenda-list">
+            {selectedHolidays.map((holiday) => (
+              <article className="agenda-event holiday-event" key={`${holiday.region}-${holiday.name}`}>
+                <i /><time>All day</time>
+                <div><h3>{holiday.name}</h3><p>{holiday.region} holiday</p></div>
+              </article>
+            ))}
             {selectedEvents.map((event) => (
               <article className="agenda-event" key={event.id}>
                 <i style={{ background: event.color }} />
