@@ -48,7 +48,10 @@ export function SnakeGame() {
 
   return (
     <section className="snake-game">
-      <div className="snake-score"><span>Score <b>{game.score}</b></span><span>Best <b>{best}</b></span></div>
+      <div className="snake-score">
+        <span>Score <b>{game.score}</b></span><span>Best <b>{best}</b></span>
+        <button onClick={restart} type="button">↻ Restart</button>
+      </div>
       <div className="snake-board" style={{ gridTemplateColumns: `repeat(${gridSize}, 1fr)` }}>
         {Array.from({ length: gridSize * gridSize }, (_, index) => {
           const point = { x: index % gridSize, y: Math.floor(index / gridSize) };
