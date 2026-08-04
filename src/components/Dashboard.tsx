@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useState } from 'react';
 import { DailyTrackers } from './DailyTrackers';
-import { dateKey, loadTasks, saveTasks } from '../lib/tasks';
+import { appToday, dateKey, loadTasks, saveTasks } from '../lib/tasks';
 import { localeForLanguage, useI18n } from '../lib/i18n';
 import { DashboardDatePicker } from './DashboardDatePicker';
 import { DashboardPriorityCard } from './DashboardPriorityCard';
@@ -14,7 +14,7 @@ const completionPoems = [
 
 export function Dashboard() {
   const { language, t } = useI18n();
-  const [selectedDate, setSelectedDate] = useState(() => new Date());
+  const [selectedDate, setSelectedDate] = useState(appToday);
   const selectedKey = dateKey(selectedDate);
   const [dayTasks, setDayTasks] = useState(() => ({ date: selectedKey, tasks: loadTasks(selectedKey) }));
   const tasks = dayTasks.tasks;
@@ -32,7 +32,7 @@ export function Dashboard() {
     weekday: 'long', month: 'long', day: 'numeric',
   }).format(selectedDate);
   const selectedDay = new Date(selectedDate); selectedDay.setHours(12, 0, 0, 0);
-  const currentDay = new Date(); currentDay.setHours(12, 0, 0, 0);
+  const currentDay = appToday();
   const dayDifference = Math.round((selectedDay.getTime() - currentDay.getTime()) / 86400000);
   const dayLabel = dayDifference === 0 ? t('today') : dayDifference === -1 ? t('yesterday') : dayDifference === 1 ? t('tomorrow') : displayedDate;
   const topPriority = tasks[0];
@@ -74,7 +74,7 @@ export function Dashboard() {
 
   const productivity = useMemo(() => {
     const savedMetrics = localStorage.getItem(`smart-life-metrics-${selectedKey}`)
-      ?? (selectedKey === dateKey(new Date()) ? localStorage.getItem('smart-life-metrics') : null);
+      ?? (selectedKey === dateKey(appToday()) ? localStorage.getItem('smart-life-metrics') : null);
     const habits = savedMetrics
       ? (JSON.parse(savedMetrics) as { habits?: boolean[] }).habits ?? []
       : [];

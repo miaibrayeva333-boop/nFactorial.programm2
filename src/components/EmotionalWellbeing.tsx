@@ -2,6 +2,7 @@ import { FormEvent, useState } from 'react';
 import { awardXp } from '../lib/xp';
 import { getWellbeingSupport } from '../lib/wellbeingAi';
 import { useI18n } from '../lib/i18n';
+import { todayKey } from '../lib/tasks';
 
 type CheckIn = {
   id: number;
@@ -94,7 +95,7 @@ function WellbeingEditor({ onClose, onSave }: { onClose: () => void; onSave: (en
   function submit(event: FormEvent) {
     event.preventDefault();
     if (!mood) return;
-    onSave({ id: Date.now(), date: new Date().toISOString().slice(0, 10), mood, energy, stress, note: note.trim() });
+    onSave({ id: Date.now(), date: todayKey(), mood, energy, stress, note: note.trim() });
   }
 
   return (

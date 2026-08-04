@@ -1,5 +1,6 @@
 import { FormEvent, useMemo, useState } from 'react';
 import { getHolidays } from '../lib/holidays';
+import { appToday } from '../lib/tasks';
 
 type CalendarEvent = {
   id: number;
@@ -21,7 +22,7 @@ function dateKey(date: Date) {
 }
 
 export function CalendarView() {
-  const today = useMemo(() => new Date(), []);
+  const today = useMemo(appToday, []);
   const [month, setMonth] = useState(() => new Date(today.getFullYear(), today.getMonth(), 1));
   const [selected, setSelected] = useState(today);
   const [editorOpen, setEditorOpen] = useState(false);

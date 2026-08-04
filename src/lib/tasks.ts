@@ -18,7 +18,14 @@ export const dateKey = (date: Date) => {
   const day = String(date.getDate()).padStart(2, '0');
   return `${year}-${month}-${day}`;
 };
-export const todayKey = () => dateKey(new Date());
+export function appToday() {
+  const parts = new Intl.DateTimeFormat('en', {
+    timeZone: 'Asia/Almaty', year: 'numeric', month: 'numeric', day: 'numeric',
+  }).formatToParts(new Date());
+  const value = (type: Intl.DateTimeFormatPartTypes) => Number(parts.find((part) => part.type === type)?.value);
+  return new Date(value('year'), value('month') - 1, value('day'), 12);
+}
+export const todayKey = () => dateKey(appToday());
 const storageKey = (date: string) => `smart-life-tasks-${date}`;
 
 export function loadTasks(date = todayKey()): SmartTask[] {
