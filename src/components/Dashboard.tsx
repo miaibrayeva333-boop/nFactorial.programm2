@@ -4,6 +4,7 @@ import { dateKey, loadTasks, saveTasks } from '../lib/tasks';
 import { localeForLanguage, useI18n } from '../lib/i18n';
 import { DashboardDatePicker } from './DashboardDatePicker';
 import { DashboardPriorityCard } from './DashboardPriorityCard';
+import { DashboardGameCard } from './DashboardGameCard';
 const completionPoems = [
   ['One brave step, one task now done,', 'You made your way toward the sun.'],
   ['The list grew quiet, the moment grew bright,', 'You kept your promise and finished it right.'],
@@ -95,6 +96,7 @@ export function Dashboard() {
       </header>
 
       <DashboardDatePicker date={selectedKey} onChange={chooseDate} onMove={moveDay} />
+      <DashboardGameCard />
 
       <DashboardPriorityCard
         dayLabel={dayLabel}

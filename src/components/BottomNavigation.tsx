@@ -26,10 +26,6 @@ export function BottomNavigation({ active, onChange }: Props) {
         <span>🏆</span>
         <small>{t('leaders')}</small>
       </Link>
-      <Link className="nav-item" href="/game">
-        <span>🍎</span>
-        <small>Game</small>
-      </Link>
       {tabs.map((tab) => (
         <button
           className={`${active === tab.label ? 'nav-item active' : 'nav-item'}${tab.label === 'Dashboard' ? ' dashboard-nav' : ''}`}
