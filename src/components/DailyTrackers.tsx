@@ -1,6 +1,7 @@
 import { FormEvent, useEffect, useState } from 'react';
 import { BudgetEditor, type BudgetTransaction } from './BudgetEditor';
 import { todayKey } from '../lib/tasks';
+import { useI18n } from '../lib/i18n';
 
 type Tracker = 'water' | 'habits' | 'budget' | 'mood';
 type Metrics = { water: number; habits: boolean[]; budget: number; mood: string; budgetHistory?: BudgetTransaction[] };
@@ -21,6 +22,7 @@ const moods = [
 ];
 
 export function DailyTrackers({ dateKey }: { dateKey: string }) {
+  const { t } = useI18n();
   const [metrics, setMetrics] = useState<Metrics>(() => {
     const saved = localStorage.getItem(`smart-life-metrics-${dateKey}`)
       ?? (dateKey === todayKey() ? localStorage.getItem('smart-life-metrics') : null);
@@ -57,10 +59,10 @@ export function DailyTrackers({ dateKey }: { dateKey: string }) {
   return (
     <>
       <div className="metric-grid">
-        <Metric icon="◒" value={`${metrics.water} / 8`} label="Glasses of water" tone="blue" progress={`${metrics.water / 8 * 100}%`} onClick={() => setOpen('water')} />
-        <Metric icon="✓" value={`${completed} / ${habitNames.length}`} label="Habits completed" tone="green" progress={`${habitProgress}%`} onClick={() => setOpen('habits')} />
-        <Metric icon="$" value={`$${metrics.budget.toLocaleString()}`} label="Budget remaining" tone="orange" onClick={() => setOpen('budget')} />
-        <Metric icon="☺" value={metrics.mood} label="Today’s mood" tone="pink" onClick={() => setOpen('mood')} />
+        <Metric icon="◒" value={`${metrics.water} / 8`} label={t('water')} tapLabel={t('tapUpdate')} tone="blue" progress={`${metrics.water / 8 * 100}%`} onClick={() => setOpen('water')} />
+        <Metric icon="✓" value={`${completed} / ${habitNames.length}`} label={t('habitsDone')} tapLabel={t('tapUpdate')} tone="green" progress={`${habitProgress}%`} onClick={() => setOpen('habits')} />
+        <Metric icon="$" value={`$${metrics.budget.toLocaleString()}`} label={t('budgetRemaining')} tapLabel={t('tapUpdate')} tone="orange" onClick={() => setOpen('budget')} />
+        <Metric icon="☺" value={metrics.mood} label={t('todaysMood')} tapLabel={t('tapUpdate')} tone="pink" onClick={() => setOpen('mood')} />
       </div>
       {open && (
         <div className="modal-backdrop" onMouseDown={() => setOpen(null)}>
@@ -68,19 +70,19 @@ export function DailyTrackers({ dateKey }: { dateKey: string }) {
             <button className="modal-close" onClick={() => setOpen(null)} type="button">×</button>
             {open === 'water' && (
               <>
-                <div className="tracker-symbol blue">◒</div><h2>Water tracker</h2>
-                <p>Keep going—you’re building a healthy rhythm.</p>
+                <div className="tracker-symbol blue">◒</div><h2>{t('waterTracker')}</h2>
+                <p>{t('waterHelp')}</p>
                 <div className="stepper">
                   <button onClick={() => setMetrics({ ...metrics, water: Math.max(0, metrics.water - 1) })} type="button">−</button>
-                  <strong>{metrics.water}<small> / 8 glasses</small></strong>
+                  <strong>{metrics.water}<small> / 8 {t('glasses')}</small></strong>
                   <button onClick={() => setMetrics({ ...metrics, water: Math.min(20, metrics.water + 1) })} type="button">＋</button>
                 </div>
               </>
             )}
             {open === 'habits' && (
               <>
-                <div className="tracker-symbol green">✓</div><h2>Today’s habits</h2>
-                <p>Tap each habit when you complete it.</p>
+                <div className="tracker-symbol green">✓</div><h2>{t('todaysHabits')}</h2>
+                <p>{t('habitsHelp')}</p>
                 <div className="habit-list">
                   {habitNames.map((habit, index) => (
                     <button onClick={() => setMetrics({ ...metrics, habits: habitNames.map((_, item) => item === index ? !(metrics.habits[item] ?? false) : metrics.habits[item] ?? false) })} type="button" key={habit}>
@@ -90,10 +92,10 @@ export function DailyTrackers({ dateKey }: { dateKey: string }) {
                   ))}
                 </div>
                 <form className="add-habit-form" onSubmit={addHabit}>
-                  <input maxLength={40} onChange={(event) => setNewHabit(event.target.value)} placeholder="Add your own habit" value={newHabit} />
-                  <button disabled={!newHabit.trim() || habitNames.length >= 12} type="submit">＋ Add</button>
+                  <input maxLength={40} onChange={(event) => setNewHabit(event.target.value)} placeholder={t('addHabit')} value={newHabit} />
+                  <button disabled={!newHabit.trim() || habitNames.length >= 12} type="submit">＋ {t('add')}</button>
                 </form>
-                {!habitNames.length && <small className="empty-habits-note">Add your first habit to begin tracking it.</small>}
+                {!habitNames.length && <small className="empty-habits-note">{t('firstHabit')}</small>}
               </>
             )}
             {open === 'budget' && <BudgetEditor
@@ -109,8 +111,8 @@ export function DailyTrackers({ dateKey }: { dateKey: string }) {
             />}
             {open === 'mood' && (
               <>
-                <div className="tracker-symbol pink">☺</div><h2>How are you feeling?</h2>
-                <p>Select the mood that best describes today.</p>
+                <div className="tracker-symbol pink">☺</div><h2>{t('feeling')}</h2>
+                <p>{t('moodHelp')}</p>
                 <div className="mood-grid">
                   {moods.map(([mood, emoji]) => (
                     <button className={metrics.mood === mood ? 'selected' : ''} onClick={() => setMetrics({ ...metrics, mood })} type="button" key={mood}>
@@ -127,15 +129,15 @@ export function DailyTrackers({ dateKey }: { dateKey: string }) {
   );
 }
 
-function Metric({ icon, value, label, tone, progress, onClick }: {
-  icon: string; value: string; label: string; tone: string; progress?: string; onClick: () => void;
+function Metric({ icon, value, label, tapLabel, tone, progress, onClick }: {
+  icon: string; value: string; label: string; tapLabel: string; tone: string; progress?: string; onClick: () => void;
 }) {
   return (
     <button className="metric-card" onClick={onClick} type="button">
       <div className={`metric-icon ${tone}`}>{icon}</div>
       <strong>{value}</strong><span>{label}</span>
       {progress && <div className="mini-progress"><i style={{ width: progress }} /></div>}
-      <small className="metric-edit">Tap to update</small>
+      <small className="metric-edit">{tapLabel}</small>
     </button>
   );
 }

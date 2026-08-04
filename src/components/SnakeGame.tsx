@@ -1,10 +1,12 @@
 import { useEffect, useRef, useState, type CSSProperties } from 'react';
 import { canTurn, gridSize, moveSnake, newSnakeGame, type Direction } from '../lib/snake';
+import { useI18n } from '../lib/i18n';
 
 const keys: Record<string, Direction> = { ArrowUp: 'up', w: 'up', ArrowDown: 'down', s: 'down', ArrowLeft: 'left', a: 'left', ArrowRight: 'right', d: 'right' };
 const snakeColors = ['#35ad82', '#6259df', '#3198e8', '#ef6b7c', '#e9983f', '#252632'];
 
 export function SnakeGame() {
+  const { t } = useI18n();
   const [game, setGame] = useState(newSnakeGame);
   const [playing, setPlaying] = useState(false);
   const [best, setBest] = useState(() => Number(localStorage.getItem('smart-axis-snake-best') ?? 0));
@@ -67,8 +69,8 @@ export function SnakeGame() {
   return (
     <section className="snake-game">
       <div className="snake-score">
-        <span>Score <b>{game.score}</b></span><span>Best <b>{best}</b></span>
-        <button onClick={restart} type="button">↻ Restart</button>
+        <span>{t('score')} <b>{game.score}</b></span><span>{t('best')} <b>{best}</b></span>
+        <button onClick={restart} type="button">↻ {t('restart')}</button>
       </div>
       <div
         className="snake-board"
@@ -82,10 +84,10 @@ export function SnakeGame() {
           const apple = game.apple.x === point.x && game.apple.y === point.y;
           return <i className={apple ? 'apple' : snakeIndex === 0 ? 'snake-head' : snakeIndex > 0 ? 'snake-body' : ''} key={index} />;
         })}
-        {(!playing || game.gameOver) && <div className="snake-message"><h2>{game.gameOver ? 'Game over' : 'Snake'}</h2><p>{game.gameOver ? `You scored ${game.score} points!` : 'Eat apples and avoid the walls.'}</p><button onClick={restart} type="button">{game.gameOver ? 'Play again' : 'Start game'}</button></div>}
+        {(!playing || game.gameOver) && <div className="snake-message"><h2>{game.gameOver ? t('gameOver') : t('snake')}</h2><p>{game.gameOver ? t('scored').replace('{score}', String(game.score)) : t('snakeHelp')}</p><button onClick={restart} type="button">{game.gameOver ? t('playAgain') : t('startGame')}</button></div>}
       </div>
       <div className="snake-colors" aria-label="Choose snake color">
-        <small>Snake color</small>
+        <small>{t('snakeColor')}</small>
         {snakeColors.map((color) => (
           <button
             aria-label={`Use ${color} for the snake`}
@@ -105,7 +107,7 @@ export function SnakeGame() {
         <button onClick={() => turn('right')} type="button">→</button>
         <button onClick={() => turn('down')} type="button">↓</button>
       </div>
-      <small>Swipe the board, use the phone buttons, or play with arrow keys and WASD. Your best score is saved on this device.</small>
+      <small>{t('gameControls')}</small>
     </section>
   );
 }

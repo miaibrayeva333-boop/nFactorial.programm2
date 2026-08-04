@@ -1,6 +1,7 @@
 import { FormEvent, useMemo, useState } from 'react';
 import { getHolidays } from '../lib/holidays';
 import { appToday } from '../lib/tasks';
+import { localeForLanguage, useI18n } from '../lib/i18n';
 
 type CalendarEvent = {
   id: number;
@@ -11,7 +12,6 @@ type CalendarEvent = {
   kind?: 'Want to do' | 'Have to do';
 };
 
-const weekdays = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
 const colors = ['#6259df', '#32a97b', '#e9983f', '#e65f75'];
 
 function dateKey(date: Date) {
@@ -22,6 +22,8 @@ function dateKey(date: Date) {
 }
 
 export function CalendarView() {
+  const { language, t } = useI18n();
+  const locale = localeForLanguage(language);
   const today = useMemo(appToday, []);
   const [month, setMonth] = useState(() => new Date(today.getFullYear(), today.getMonth(), 1));
   const [selected, setSelected] = useState(today);
@@ -31,6 +33,7 @@ export function CalendarView() {
     return saved ? JSON.parse(saved) as CalendarEvent[] : [];
   });
   const holidays = useMemo(() => getHolidays(month.getFullYear()), [month]);
+  const weekdays = useMemo(() => Array.from({ length: 7 }, (_, index) => new Intl.DateTimeFormat(locale, { weekday: 'short' }).format(new Date(2024, 0, index + 1))), [locale]);
 
   const firstOffset = (month.getDay() + 6) % 7;
   const numberOfDays = new Date(month.getFullYear(), month.getMonth() + 1, 0).getDate();
@@ -58,14 +61,14 @@ export function CalendarView() {
   return (
     <div className="dashboard calendar-view">
       <header className="topbar calendar-header">
-        <div><p className="eyebrow">PLAN YOUR TIME</p><h1>Calendar</h1></div>
+        <div><p className="eyebrow">{t('planYourTime')}</p><h1>{t('calendar')}</h1></div>
         <button className="add-button" onClick={() => setEditorOpen(true)} type="button">＋</button>
       </header>
 
       <section className="calendar-card">
         <div className="month-header">
           <button onClick={() => changeMonth(-1)} type="button">‹</button>
-          <h2>{month.toLocaleDateString('en', { month: 'long', year: 'numeric' })}</h2>
+          <h2>{month.toLocaleDateString(locale, { month: 'long', year: 'numeric' })}</h2>
           <button onClick={() => changeMonth(1)} type="button">›</button>
         </div>
         <div className="weekday-row">
@@ -99,28 +102,28 @@ export function CalendarView() {
 
       <section className="agenda-section">
         <div className="section-title">
-          <h2>{selected.toLocaleDateString('en', { weekday: 'long', month: 'long', day: 'numeric' })}</h2>
+          <h2>{selected.toLocaleDateString(locale, { weekday: 'long', month: 'long', day: 'numeric' })}</h2>
         </div>
         {selectedEvents.length || selectedHolidays.length ? (
           <div className="agenda-list">
             {selectedHolidays.map((holiday) => (
               <article className="agenda-event holiday-event" key={`${holiday.region}-${holiday.name}`}>
-                <i /><time>All day</time>
-                <div><h3>{holiday.name}</h3><p>{holiday.region} holiday</p></div>
+                <i /><time>{t('allDay')}</time>
+                <div><h3>{holiday.name}</h3><p>{holiday.region} {t('holiday')}</p></div>
               </article>
             ))}
             {selectedEvents.map((event) => (
               <article className="agenda-event" key={event.id}>
                 <i style={{ background: event.color }} />
                 <time>{event.time}</time>
-                <div><h3>{event.title}</h3><p><b className={event.kind === 'Have to do' ? 'plan-kind required' : 'plan-kind'}>{event.kind ?? 'Want to do'}</b> Reminder at event time</p></div>
+                <div><h3>{event.title}</h3><p><b className={event.kind === 'Have to do' ? 'plan-kind required' : 'plan-kind'}>{event.kind === 'Have to do' ? t('haveToDo') : t('wantToDo')}</b> {t('reminderAtTime')}</p></div>
                 <button aria-label={`Delete ${event.title}`} onClick={() => save(events.filter((item) => item.id !== event.id))} type="button">×</button>
               </article>
             ))}
           </div>
         ) : (
           <button className="empty-agenda" onClick={() => setEditorOpen(true)} type="button">
-            <span>＋</span><strong>No events yet</strong><small>Add something to this day</small>
+            <span>＋</span><strong>{t('noEvents')}</strong><small>{t('addToDay')}</small>
           </button>
         )}
       </section>
@@ -134,6 +137,7 @@ function EventEditor({ date, onClose, onSave }: {
   onClose: () => void;
   onSave: (event: CalendarEvent) => void;
 }) {
+  const { language, t } = useI18n();
   const [title, setTitle] = useState('');
   const [time, setTime] = useState('09:00');
   const [color, setColor] = useState(colors[0]);
@@ -147,14 +151,14 @@ function EventEditor({ date, onClose, onSave }: {
       <form className="tracker-modal event-editor" onMouseDown={(event) => event.stopPropagation()} onSubmit={submit}>
         <button className="modal-close" onClick={onClose} type="button">×</button>
         <div className="tracker-symbol blue">□</div>
-        <h2>New event</h2><p>{date.toLocaleDateString('en', { weekday: 'long', month: 'long', day: 'numeric' })}</p>
-        <label>Event name<input autoFocus className="amount-input" value={title} onChange={(event) => setTitle(event.target.value)} placeholder="What’s happening?" /></label>
-        <label>Time<input className="amount-input" value={time} onChange={(event) => setTime(event.target.value)} type="time" /></label>
-        <fieldset><legend>What kind of plan is this?</legend><div className="plan-type-options">
-          {(['Want to do', 'Have to do'] as const).map((option) => <button className={kind === option ? 'selected' : ''} key={option} onClick={() => setKind(option)} type="button">{option}</button>)}
+        <h2>{t('newEvent')}</h2><p>{date.toLocaleDateString(localeForLanguage(language), { weekday: 'long', month: 'long', day: 'numeric' })}</p>
+        <label>{t('eventName')}<input autoFocus className="amount-input" value={title} onChange={(event) => setTitle(event.target.value)} placeholder={t('eventPlaceholder')} /></label>
+        <label>{t('time')}<input className="amount-input" value={time} onChange={(event) => setTime(event.target.value)} type="time" /></label>
+        <fieldset><legend>{t('planKind')}</legend><div className="plan-type-options">
+          {(['Want to do', 'Have to do'] as const).map((option) => <button className={kind === option ? 'selected' : ''} key={option} onClick={() => setKind(option)} type="button">{option === 'Want to do' ? t('wantToDo') : t('haveToDo')}</button>)}
         </div></fieldset>
         <div className="color-picker">{colors.map((item) => <button aria-label={`Use ${item}`} className={color === item ? 'selected' : ''} key={item} onClick={() => setColor(item)} style={{ background: item }} type="button" />)}</div>
-        <button className="save-profile-button" disabled={!title.trim()} type="submit">Add event</button>
+        <button className="save-profile-button" disabled={!title.trim()} type="submit">{t('addEvent')}</button>
       </form>
     </div>
   );

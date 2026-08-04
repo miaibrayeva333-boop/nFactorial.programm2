@@ -1,7 +1,9 @@
 import { FormEvent, useEffect, useState } from 'react';
 import { loadTasks, saveTasks, type SmartTask, type TaskPriority } from '../lib/tasks';
+import { useI18n } from '../lib/i18n';
 
 export function TasksView() {
+  const { t } = useI18n();
   const [tasks, setTasks] = useState(loadTasks);
   const [filter, setFilter] = useState<'All' | 'Today' | 'High priority'>('All');
   const [editorOpen, setEditorOpen] = useState(false);
@@ -13,8 +15,8 @@ export function TasksView() {
 
   return (
     <div className="dashboard tasks-view">
-      <header className="topbar"><div className="brand-greeting"><img className="app-logo" src="/assets/smart-life-logo.png" alt="Smart Axis logo" /><div><p className="eyebrow">STAY ON TRACK</p><h1>My tasks</h1></div></div>
-        <button className="add-button" aria-label="Add task" onClick={() => setEditorOpen(true)} type="button">＋</button>
+      <header className="topbar"><div className="brand-greeting"><img className="app-logo" src="/assets/smart-life-logo.png" alt="Smart Axis logo" /><div><p className="eyebrow">{t('stayOnTrack')}</p><h1>{t('myTasks')}</h1></div></div>
+        <button className="add-button" aria-label={t('addTask')} onClick={() => setEditorOpen(true)} type="button">＋</button>
       </header>
       <div className="filter-row">
         {(['All', 'Today', 'High priority'] as const).map((option) => (
@@ -24,7 +26,7 @@ export function TasksView() {
             onClick={() => setFilter(option)}
             type="button"
           >
-            {option}
+            {option === 'All' ? t('all') : option === 'Today' ? t('today') : t('highPriority')}
           </button>
         ))}
       </div>
@@ -46,6 +48,7 @@ export function TasksView() {
 }
 
 function TaskEditor({ onClose, onSave }: { onClose: () => void; onSave: (task: SmartTask) => void }) {
+  const { t } = useI18n();
   const [title, setTitle] = useState('');
   const [category, setCategory] = useState('Personal');
   const [time, setTime] = useState('');
@@ -58,7 +61,7 @@ function TaskEditor({ onClose, onSave }: { onClose: () => void; onSave: (task: S
       id: String(Date.now()),
       title: title.trim(),
       category,
-      meta: `${category} · ${time || 'No due time'}`,
+      meta: `${category} · ${time || t('noDueTime')}`,
       priority,
       done: false,
       color: priority === 'High' ? 'orange' : priority === 'Low' ? 'green' : 'purple',
@@ -70,17 +73,17 @@ function TaskEditor({ onClose, onSave }: { onClose: () => void; onSave: (task: S
       <form className="tracker-modal task-editor" onMouseDown={(event) => event.stopPropagation()} onSubmit={submit}>
         <button className="modal-close" onClick={onClose} type="button">×</button>
         <div className="tracker-symbol green">✓</div>
-        <h2>Add a task</h2>
-        <p>Give your task a clear name and priority.</p>
-        <label>Task name<input autoFocus className="amount-input" maxLength={80} onChange={(event) => setTitle(event.target.value)} placeholder="What needs to be done?" value={title} /></label>
+        <h2>{t('addTask')}</h2>
+        <p>{t('taskHelp')}</p>
+        <label>{t('taskName')}<input autoFocus className="amount-input" maxLength={80} onChange={(event) => setTitle(event.target.value)} placeholder={t('taskPlaceholder')} value={title} /></label>
         <div className="task-editor__row">
-          <label>Category<select onChange={(event) => setCategory(event.target.value)} value={category}><option>Personal</option><option>School</option><option>Work</option><option>Wellness</option></select></label>
-          <label>Time<input className="amount-input" onChange={(event) => setTime(event.target.value)} type="time" value={time} /></label>
+          <label>{t('category')}<select onChange={(event) => setCategory(event.target.value)} value={category}><option>Personal</option><option>School</option><option>Work</option><option>Wellness</option></select></label>
+          <label>{t('time')}<input className="amount-input" onChange={(event) => setTime(event.target.value)} type="time" value={time} /></label>
         </div>
-        <fieldset><legend>Priority</legend><div className="priority-options">
-          {(['Low', 'Medium', 'High'] as const).map((value) => <button className={priority === value ? `selected ${value.toLowerCase()}` : ''} key={value} onClick={() => setPriority(value)} type="button">{value}</button>)}
+        <fieldset><legend>{t('priority')}</legend><div className="priority-options">
+          {(['Low', 'Medium', 'High'] as const).map((value) => <button className={priority === value ? `selected ${value.toLowerCase()}` : ''} key={value} onClick={() => setPriority(value)} type="button">{t(value.toLowerCase() as 'low' | 'medium' | 'high')}</button>)}
         </div></fieldset>
-        <button className="save-profile-button" disabled={!title.trim()} type="submit">Add task</button>
+        <button className="save-profile-button" disabled={!title.trim()} type="submit">{t('addTask')}</button>
       </form>
     </div>
   );

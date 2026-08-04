@@ -126,12 +126,12 @@ export function Dashboard() {
               <i className={`task-dot ${task.color}`} />
               <div>
                 <h3 className={task.done ? 'done' : ''}>{task.title}</h3>
-                <p>{task.meta}{task.priority === 'High' && <strong className="priority-badge">High priority</strong>}</p>
+                <p>{task.meta}{task.priority === 'High' && <strong className="priority-badge">{t('highPriority')}</strong>}</p>
               </div>
               <span>›</span>
             </article>
           ))}
-          {!tasks.length && <div className="empty-dashboard-tasks"><strong>No tasks yet</strong><span>Open Tasks to add your first one.</span></div>}
+          {!tasks.length && <div className="empty-dashboard-tasks"><strong>{t('noTasks')}</strong><span>{t('openTasks')}</span></div>}
         </div>
       </section>
 
