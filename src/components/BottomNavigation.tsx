@@ -1,15 +1,16 @@
 import { Link } from 'wouter';
 import { useI18n } from '../lib/i18n';
+import { NavIcon, type NavIconName } from './NavIcon';
 
 export type AppTab = 'Dashboard' | 'Tasks' | 'Calendar' | 'Health' | 'AI' | 'Settings';
 
-const tabs: { label: AppTab; icon: string }[] = [
-  { label: 'Tasks', icon: '✓' },
-  { label: 'Calendar', icon: '□' },
-  { label: 'Dashboard', icon: '⌂' },
-  { label: 'Health', icon: '♡' },
-  { label: 'AI', icon: '✦' },
-  { label: 'Settings', icon: '⚙' },
+const tabs: { label: AppTab; icon: NavIconName }[] = [
+  { label: 'Tasks', icon: 'tasks' },
+  { label: 'Calendar', icon: 'calendar' },
+  { label: 'Dashboard', icon: 'dashboard' },
+  { label: 'Health', icon: 'health' },
+  { label: 'AI', icon: 'ai' },
+  { label: 'Settings', icon: 'settings' },
 ];
 
 type Props = {
@@ -23,7 +24,7 @@ export function BottomNavigation({ active, onChange }: Props) {
   return (
     <nav className="bottom-nav" aria-label="Main navigation">
       <Link className="nav-item" href="/leaderboard">
-        <span>🏆</span>
+        <span><NavIcon name="leaders" /></span>
         <small>{t('leaders')}</small>
       </Link>
       {tabs.map((tab) => (
@@ -33,7 +34,7 @@ export function BottomNavigation({ active, onChange }: Props) {
           onClick={() => onChange(tab.label)}
           type="button"
         >
-          <span>{tab.icon}</span>
+          <span><NavIcon name={tab.icon} /></span>
           <small>{labels[tab.label]}</small>
         </button>
       ))}
