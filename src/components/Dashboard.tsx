@@ -95,7 +95,7 @@ export function Dashboard() {
         </div>
       </header>
 
-      <DashboardDatePicker date={selectedKey} onChange={chooseDate} onMove={moveDay} />
+      <DashboardDatePicker date={selectedKey} label={dayLabel} onChange={chooseDate} onMove={moveDay} />
       <DashboardGameCard />
 
       <DashboardPriorityCard
