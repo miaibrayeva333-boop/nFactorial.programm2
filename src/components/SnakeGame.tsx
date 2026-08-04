@@ -1,12 +1,14 @@
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useRef, useState, type CSSProperties } from 'react';
 import { canTurn, gridSize, moveSnake, newSnakeGame, type Direction } from '../lib/snake';
 
 const keys: Record<string, Direction> = { ArrowUp: 'up', w: 'up', ArrowDown: 'down', s: 'down', ArrowLeft: 'left', a: 'left', ArrowRight: 'right', d: 'right' };
+const snakeColors = ['#35ad82', '#6259df', '#3198e8', '#ef6b7c', '#e9983f', '#252632'];
 
 export function SnakeGame() {
   const [game, setGame] = useState(newSnakeGame);
   const [playing, setPlaying] = useState(false);
   const [best, setBest] = useState(() => Number(localStorage.getItem('smart-axis-snake-best') ?? 0));
+  const [snakeColor, setSnakeColor] = useState(() => localStorage.getItem('smart-axis-snake-color') ?? snakeColors[0]);
   const direction = useRef(game.direction);
   const touchStart = useRef<{ x: number; y: number } | null>(null);
 
@@ -22,6 +24,11 @@ export function SnakeGame() {
     direction.current = next.direction;
     setGame(next);
     setPlaying(true);
+  }
+
+  function chooseColor(color: string) {
+    setSnakeColor(color);
+    localStorage.setItem('smart-axis-snake-color', color);
   }
 
   function finishSwipe(x: number, y: number) {
@@ -67,7 +74,7 @@ export function SnakeGame() {
         className="snake-board"
         onTouchEnd={(event) => finishSwipe(event.changedTouches[0].clientX, event.changedTouches[0].clientY)}
         onTouchStart={(event) => { touchStart.current = { x: event.touches[0].clientX, y: event.touches[0].clientY }; }}
-        style={{ gridTemplateColumns: `repeat(${gridSize}, 1fr)` }}
+        style={{ gridTemplateColumns: `repeat(${gridSize}, 1fr)`, '--snake-color': snakeColor } as CSSProperties}
       >
         {Array.from({ length: gridSize * gridSize }, (_, index) => {
           const point = { x: index % gridSize, y: Math.floor(index / gridSize) };
@@ -76,6 +83,20 @@ export function SnakeGame() {
           return <i className={apple ? 'apple' : snakeIndex === 0 ? 'snake-head' : snakeIndex > 0 ? 'snake-body' : ''} key={index} />;
         })}
         {(!playing || game.gameOver) && <div className="snake-message"><h2>{game.gameOver ? 'Game over' : 'Snake'}</h2><p>{game.gameOver ? `You scored ${game.score} points!` : 'Eat apples and avoid the walls.'}</p><button onClick={restart} type="button">{game.gameOver ? 'Play again' : 'Start game'}</button></div>}
+      </div>
+      <div className="snake-colors" aria-label="Choose snake color">
+        <small>Snake color</small>
+        {snakeColors.map((color) => (
+          <button
+            aria-label={`Use ${color} for the snake`}
+            aria-pressed={snakeColor === color}
+            className={snakeColor === color ? 'selected' : ''}
+            key={color}
+            onClick={() => chooseColor(color)}
+            style={{ backgroundColor: color }}
+            type="button"
+          />
+        ))}
       </div>
       <div className="snake-controls" aria-label="Snake controls">
         <button onClick={() => turn('up')} type="button">↑</button>
