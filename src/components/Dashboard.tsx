@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useState } from 'react';
 import { DailyTrackers } from './DailyTrackers';
 import { dateKey, loadTasks, saveTasks } from '../lib/tasks';
-import { useI18n } from '../lib/i18n';
+import { localeForLanguage, useI18n } from '../lib/i18n';
 import { DashboardDatePicker } from './DashboardDatePicker';
 import { DashboardPriorityCard } from './DashboardPriorityCard';
 const completionPoems = [
@@ -26,10 +26,14 @@ export function Dashboard() {
   const firstName = name.trim().split(/\s+/)[0];
   const hour = new Date().getHours();
   const greeting = hour < 12 ? t('goodMorning') : hour < 18 ? t('goodAfternoon') : t('goodEvening');
-  const locale = language === 'Русский' ? 'ru' : language === 'Қазақша' ? 'kk' : 'en';
+  const locale = localeForLanguage(language);
   const displayedDate = new Intl.DateTimeFormat(locale, {
     weekday: 'long', month: 'long', day: 'numeric',
   }).format(selectedDate);
+  const selectedDay = new Date(selectedDate); selectedDay.setHours(12, 0, 0, 0);
+  const currentDay = new Date(); currentDay.setHours(12, 0, 0, 0);
+  const dayDifference = Math.round((selectedDay.getTime() - currentDay.getTime()) / 86400000);
+  const dayLabel = dayDifference === 0 ? t('today') : dayDifference === -1 ? t('yesterday') : dayDifference === 1 ? t('tomorrow') : displayedDate;
   const topPriority = tasks[0];
   const activePoem = completionPoems[Math.max(0, priorityWins - 1) % completionPoems.length];
 
@@ -93,6 +97,7 @@ export function Dashboard() {
       <DashboardDatePicker date={selectedKey} onChange={chooseDate} onMove={moveDay} />
 
       <DashboardPriorityCard
+        dayLabel={dayLabel}
         labels={{ topPriority: t('topPriority'), finished: t('finished') }}
         onOptions={() => setMessage('Priority options opened')}
         poem={activePoem}
@@ -106,7 +111,7 @@ export function Dashboard() {
       </section>
 
       <section className="section">
-        <div className="section-title"><h2>{t('todaysTasks')} <span>{tasks.length}</span></h2></div>
+        <div className="section-title"><h2>{dayLabel} · {t('tasks')} <span>{tasks.length}</span></h2></div>
         <div className="task-list">
           {tasks.map((task) => (
             <article className={task.priority === 'High' ? 'task-row high-priority' : 'task-row'} key={task.id}>

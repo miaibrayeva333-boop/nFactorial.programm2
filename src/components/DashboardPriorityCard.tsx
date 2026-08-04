@@ -5,10 +5,11 @@ type Props = {
   priorityWins: number;
   poem: string[];
   labels: { topPriority: string; finished: string };
+  dayLabel: string;
   onOptions: () => void;
 };
 
-export function DashboardPriorityCard({ task, priorityWins, poem, labels, onOptions }: Props) {
+export function DashboardPriorityCard({ task, priorityWins, poem, labels, dayLabel, onOptions }: Props) {
   if (!task) return (
     <section className="priority-card empty-priority">
       <span className="priority-label">{labels.topPriority}</span>
@@ -30,7 +31,7 @@ export function DashboardPriorityCard({ task, priorityWins, poem, labels, onOpti
         <div className="progress"><i style={{ width: task.done ? '100%' : '72%' }} /></div><b>{task.done ? '100%' : '72%'}</b>
       </div>
       <div className="priority-footer">
-        <span>{task.done ? '✓ Completed today' : '◷ Today, 10:30 AM'}</span>
+        <span>{task.done ? `✓ Completed · ${dayLabel}` : `◷ ${dayLabel}`}</span>
         <span>{task.done ? `★ Priority win ${priorityWins}` : '● High priority'}</span>
       </div>
     </section>

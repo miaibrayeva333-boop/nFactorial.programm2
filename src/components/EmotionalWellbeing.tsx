@@ -125,4 +125,7 @@ const supportFallback = {
   English: 'This sounds like a difficult moment. Try one slow breath, get some water, and consider telling a trusted person how you feel.',
   Русский: 'Похоже, сейчас вам непросто. Сделайте медленный вдох, выпейте воды и попробуйте рассказать о своих чувствах человеку, которому доверяете.',
   Қазақша: 'Қазір сізге қиын болып тұрған сияқты. Баяу тыныс алып, су ішіп, сезіміңізді сенетін адамыңызға айтып көріңіз.',
+  Español: 'Parece un momento difícil. Respira lentamente, bebe un poco de agua y considera contarle cómo te sientes a alguien de confianza.',
+  Français: 'Ce moment semble difficile. Respirez lentement, buvez un peu d’eau et pensez à parler de vos émotions à une personne de confiance.',
+  Deutsch: 'Das klingt nach einem schwierigen Moment. Atme langsam, trink etwas Wasser und sprich vielleicht mit einer vertrauten Person über deine Gefühle.',
 };

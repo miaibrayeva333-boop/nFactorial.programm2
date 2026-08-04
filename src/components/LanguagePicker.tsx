@@ -1,6 +1,4 @@
-import { useI18n, type Language } from '../lib/i18n';
-
-const languages: Language[] = ['English', 'Русский', 'Қазақша'];
+import { languages, useI18n } from '../lib/i18n';
 
 export function LanguagePicker() {
   const { language, setLanguage } = useI18n();

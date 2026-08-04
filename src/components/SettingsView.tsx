@@ -2,7 +2,7 @@ import { useState } from 'react';
 import type { User } from '@supabase/supabase-js';
 import { supabase } from '../lib/supabase';
 import { getGender, saveGender, type Gender } from '../lib/profile';
-import { useI18n, type Language } from '../lib/i18n';
+import { languages, useI18n, type Language } from '../lib/i18n';
 
 type Props = { dark: boolean; onTheme: () => void; user: User };
 
@@ -66,9 +66,7 @@ export function SettingsView({ dark, onTheme, user }: Props) {
             <span className="setting-icon">文</span>
             <span><strong>{t('language')}</strong><small>{t('chooseLanguage')}</small></span>
             <select value={language} onChange={(event) => chooseLanguage(event.target.value as Language)}>
-              <option>English</option>
-              <option>Русский</option>
-              <option>Қазақша</option>
+              {languages.map((option) => <option key={option}>{option}</option>)}
             </select>
           </div>
           <div className="setting-row language-row">

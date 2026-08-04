@@ -20,6 +20,24 @@ const slides = {
     ['🏆', 'XP арқылы өсіңіз', 'Күнделікті мақсаттарды орындап, XP жинап, рейтингте көтеріліңіз.'],
     ['🍎', 'Ойынмен демалыңыз', 'Apple Snake ойынын телефонда немесе компьютерде интернетсіз ойнаңыз.'],
   ],
+  Español: [
+    ['✓', 'Planifica tu día', 'Organiza tareas, prioridades y calendario en un espacio tranquilo.'],
+    ['♡', 'Comprende tu bienestar', 'Registra salud y emociones con apoyo amable de IA.'],
+    ['🏆', 'Crece con XP', 'Completa objetivos, gana XP y sube en la clasificación.'],
+    ['🍎', 'Descansa jugando', 'Juega Apple Snake en el móvil o el ordenador, incluso sin conexión.'],
+  ],
+  Français: [
+    ['✓', 'Planifiez votre journée', 'Organisez tâches, priorités et calendrier dans un espace calme.'],
+    ['♡', 'Comprenez votre bien-être', 'Suivez santé et émotions avec un soutien bienveillant de l’IA.'],
+    ['🏆', 'Progressez avec les XP', 'Terminez vos objectifs et montez dans le classement.'],
+    ['🍎', 'Faites une pause', 'Jouez à Apple Snake sur téléphone ou ordinateur, même hors ligne.'],
+  ],
+  Deutsch: [
+    ['✓', 'Plane deinen Tag', 'Organisiere Aufgaben, Prioritäten und Kalender an einem ruhigen Ort.'],
+    ['♡', 'Verstehe dein Wohlbefinden', 'Erfasse Gesundheit und Gefühle mit einfühlsamer KI-Hilfe.'],
+    ['🏆', 'Wachse mit XP', 'Erledige Ziele, sammle XP und steige in der Rangliste auf.'],
+    ['🍎', 'Mach eine Spielpause', 'Spiele Apple Snake auf Handy oder Computer, auch offline.'],
+  ],
 } as const;
 
 export function AppPresentation() {
