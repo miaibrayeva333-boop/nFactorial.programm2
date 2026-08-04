@@ -2,8 +2,12 @@ import { FormEvent, useState } from 'react';
 import { isSupabaseConfigured, supabase } from '../lib/supabase';
 import { SupabaseSetupMessage } from './SupabaseSetupMessage';
 import { AppPresentation } from './AppPresentation';
+import { useI18n } from '../lib/i18n';
+import { onboardingCopy } from '../lib/onboardingCopy';
 
 export function Auth() {
+  const { language } = useI18n();
+  const copy = onboardingCopy[language];
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [mode, setMode] = useState<'signin' | 'signup'>('signin');
@@ -51,25 +55,25 @@ export function Auth() {
       <AppPresentation />
       <section className="auth-card">
         <img className="auth-logo" src="/assets/smart-life-logo.png" alt="Smart Axis" />
-        <p className="eyebrow">WELCOME TO SMART AXIS</p>
+        <p className="eyebrow">{copy.welcome}</p>
         <div className="auth-mode-tabs" aria-label="Account access">
-          <button className={mode === 'signin' ? 'selected' : ''} onClick={() => { setMode('signin'); setMessage(''); }} type="button">Log in</button>
-          <button className={mode === 'signup' ? 'selected' : ''} onClick={() => { setMode('signup'); setMessage(''); }} type="button">Register</button>
+          <button className={mode === 'signin' ? 'selected' : ''} onClick={() => { setMode('signin'); setMessage(''); }} type="button">{copy.login}</button>
+          <button className={mode === 'signup' ? 'selected' : ''} onClick={() => { setMode('signup'); setMessage(''); }} type="button">{copy.register}</button>
         </div>
-        <h1>{mode === 'signin' ? 'Log in to Smart Axis' : 'Create your account'}</h1>
-        <p className="auth-subtitle">Your tasks, health, calendar, and daily plans in one calm place.</p>
+        <h1>{mode === 'signin' ? copy.loginTitle : copy.signupTitle}</h1>
+        <p className="auth-subtitle">{copy.authSubtitle}</p>
 
         <button className="google-auth-button" disabled={busy} onClick={() => void useGoogle()} type="button">
           <GoogleMark />
-          Continue with Google
+          {copy.google}
         </button>
-        <div className="auth-divider"><span>or continue with email</span></div>
+        <div className="auth-divider"><span>{copy.emailDivider}</span></div>
 
         <form className="auth-form" onSubmit={submit}>
-          <label>Email address<input autoComplete="email" onChange={(event) => setEmail(event.target.value)} placeholder="you@example.com" required type="email" value={email} /></label>
-          <label>Password<input autoComplete={mode === 'signin' ? 'current-password' : 'new-password'} minLength={6} onChange={(event) => setPassword(event.target.value)} placeholder="At least 6 characters" required type="password" value={password} /></label>
+          <label>{copy.email}<input autoComplete="email" onChange={(event) => setEmail(event.target.value)} placeholder="you@example.com" required type="email" value={email} /></label>
+          <label>{copy.password}<input autoComplete={mode === 'signin' ? 'current-password' : 'new-password'} minLength={6} onChange={(event) => setPassword(event.target.value)} placeholder="••••••" required type="password" value={password} /></label>
           <button className="auth-submit" disabled={busy} type="submit">
-            {busy ? 'Please wait…' : mode === 'signin' ? 'Sign in' : 'Create account'}
+            {busy ? copy.wait : mode === 'signin' ? copy.signIn : copy.create}
           </button>
         </form>
 
@@ -78,9 +82,9 @@ export function Auth() {
           setMode(mode === 'signin' ? 'signup' : 'signin');
           setMessage('');
         }} type="button">
-          {mode === 'signin' ? "New to Smart Axis? Create an account" : 'Already have an account? Sign in'}
+          {mode === 'signin' ? copy.newAccount : copy.existingAccount}
         </button>
-        <small>By continuing, you agree to securely authenticate through Supabase.</small>
+        <small>{copy.terms}</small>
       </section>
     </main>
   );
