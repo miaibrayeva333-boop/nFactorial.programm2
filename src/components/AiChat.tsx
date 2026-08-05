@@ -1,6 +1,7 @@
 import { FormEvent, useEffect, useRef, useState } from 'react';
 import { isSupabaseConfigured, supabase } from '../lib/supabase';
 import { useI18n } from '../lib/i18n';
+import { sectionCopy } from '../lib/sectionCopy';
 
 type Message = { id: number; role: 'assistant' | 'user'; text: string };
 const system = `You are Axis, the concise and friendly Smart Axis personal organization assistant.
@@ -12,6 +13,7 @@ Give practical short answers with clear next steps. Never claim to change data y
 
 export function AiChat() {
   const { language } = useI18n();
+  const copy = sectionCopy(language);
   const name = localStorage.getItem('smart-life-name') ?? 'Alex';
   const firstName = name.trim().split(/\s+/)[0];
   const savedMetrics = localStorage.getItem('smart-life-metrics');
@@ -19,13 +21,11 @@ export function AiChat() {
     ? (JSON.parse(savedMetrics) as { mood?: string }).mood ?? 'unsure'
     : 'unsure';
   const suggestions = [
-    `I feel ${mood.toLowerCase()}—help me check in`,
-    'Help me calm down',
-    'Ask me a gentle journal question',
-    'Plan a low-stress day',
+    `${copy.moodPrompt}: ${mood.toLowerCase()}`,
+    copy.calmDown, copy.journal, copy.lowStress,
   ];
   const [messages, setMessages] = useState<Message[]>([
-    { id: 1, role: 'assistant', text: 'Hi! How can I help organize your day?' },
+    { id: 1, role: 'assistant', text: copy.aiHello },
   ]);
   const [question, setQuestion] = useState('');
   const [loading, setLoading] = useState(false);
@@ -85,18 +85,18 @@ export function AiChat() {
       <section className="ai-chat">
         <header className="ai-chat__header">
           <img className="ai-avatar mascot-avatar" src="/assets/axolotl-ai-mascot.png" alt="Friendly axolotl AI mascot" />
-          <div><h2>Axie · Smart Axis AI</h2><p><i /> Planning and emotional support</p></div>
+          <div><h2>Axie · Smart Axis AI</h2><p><i /> {copy.aiSubtitle}</p></div>
         </header>
         <div className="ai-messages">
           {messages.length === 1 && (
             <div className="ai-welcome">
               <img className="ai-mascot-large" src="/assets/axolotl-ai-mascot.png" alt="Axie the axolotl" />
               <div className="mascot-bubble">
-                <strong>Hi {firstName}! I noticed today’s mood is “{mood}.”</strong>
-                <span>Would you like to talk about how you’re feeling, or make a gentle plan for your day?</span>
+                <strong>{firstName}! {copy.aiMood} “{mood}.”</strong>
+                <span>{copy.aiTalk}</span>
               </div>
-              <h1>What’s on your mind?</h1>
-              <p>Axie can help you reflect, calm down, plan gently, or find one manageable next step.</p>
+              <h1>{copy.whatsOnMind}</h1>
+              <p>{copy.aiHelp}</p>
             </div>
           )}
           {messages.map((message) => (
@@ -123,12 +123,12 @@ export function AiChat() {
               autoFocus
               maxLength={1000}
               onChange={(event) => setQuestion(event.target.value)}
-              placeholder="Message Axis..."
+              placeholder={copy.message}
               value={question}
             />
-            <button aria-label="Send message" disabled={!question.trim() || loading} type="submit">↑</button>
+            <button aria-label={copy.send} disabled={!question.trim() || loading} type="submit">↑</button>
           </form>
-          <small>Axis can make mistakes. Check important information.</small>
+          <small>{copy.aiWarning}</small>
         </footer>
       </section>
     </div>
