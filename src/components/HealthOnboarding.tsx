@@ -1,4 +1,6 @@
 import { FormEvent, useState } from 'react';
+import { useI18n } from '../lib/i18n';
+import { sectionCopy } from '../lib/sectionCopy';
 
 export type CycleProfile = {
   periodLength: number;
@@ -11,6 +13,8 @@ type Props = {
 };
 
 export function HealthOnboarding({ onComplete }: Props) {
+  const { language, t } = useI18n();
+  const copy = sectionCopy(language);
   const [step, setStep] = useState(1);
   const [latest, setLatest] = useState('');
   const [previous, setPrevious] = useState('');
@@ -29,37 +33,35 @@ export function HealthOnboarding({ onComplete }: Props) {
     <div className="dashboard health-onboarding">
       <div className="onboarding-progress"><i style={{ width: `${step / 3 * 100}%` }} /></div>
       <div className="onboarding-mascot">♡</div>
-      <p className="eyebrow">HEALTH SETUP · {step} OF 3</p>
+      <p className="eyebrow">{copy.healthSetup} · {step} {copy.of} 3</p>
       {step === 1 && (
         <section>
-          <h1>Let’s understand your cycle</h1>
-          <p>When did your most recent period start? Day 1 is the first day of bleeding.</p>
-          <label>Most recent start date<input autoFocus className="amount-input" max={new Date().toISOString().slice(0, 10)} onChange={(event) => setLatest(event.target.value)} type="date" value={latest} /></label>
-          <button className="onboarding-next" disabled={!latest} onClick={() => setStep(2)} type="button">Continue</button>
+          <h1>{copy.understandCycle}</h1>
+          <p>{copy.recentPeriodQuestion}</p>
+          <label>{copy.recentStart}<input autoFocus className="amount-input" max={new Date().toISOString().slice(0, 10)} onChange={(event) => setLatest(event.target.value)} type="date" value={latest} /></label>
+          <button className="onboarding-next" disabled={!latest} onClick={() => setStep(2)} type="button">{copy.continue}</button>
         </section>
       )}
       {step === 2 && (
         <section>
-          <h1>Add earlier period starts</h1>
-          <p>Two earlier dates help calculate your personal average. Skip any date you do not remember.</p>
-          <label>Previous start date<input autoFocus className="amount-input" max={latest} onChange={(event) => setPrevious(event.target.value)} type="date" value={previous} /></label>
-          <label>One more start date — optional<input className="amount-input" max={previous || latest} onChange={(event) => setOlder(event.target.value)} type="date" value={older} /></label>
-          <div className="onboarding-actions"><button onClick={() => setStep(1)} type="button">Back</button><button onClick={() => setStep(3)} type="button">Continue</button></div>
+          <h1>{copy.earlierStarts}</h1><p>{copy.earlierHelp}</p>
+          <label>{copy.previousStart}<input autoFocus className="amount-input" max={latest} onChange={(event) => setPrevious(event.target.value)} type="date" value={previous} /></label>
+          <label>{copy.optionalStart}<input className="amount-input" max={previous || latest} onChange={(event) => setOlder(event.target.value)} type="date" value={older} /></label>
+          <div className="onboarding-actions"><button onClick={() => setStep(1)} type="button">{t('back')}</button><button onClick={() => setStep(3)} type="button">{copy.continue}</button></div>
         </section>
       )}
       {step === 3 && (
         <form onSubmit={finish}>
-          <h1>Your usual pattern</h1>
-          <p>These answers provide a starting estimate and improve as you log more cycles.</p>
-          <label>Periods usually last <strong>{periodLength} days</strong><input className="progress-range" max="10" min="1" onChange={(event) => setPeriodLength(Number(event.target.value))} type="range" value={periodLength} /></label>
-          <label>Usual cycle length <strong>{defaultCycle} days</strong><input className="progress-range" max="45" min="20" onChange={(event) => setDefaultCycle(Number(event.target.value))} type="range" value={defaultCycle} /></label>
-          <fieldset><legend>How predictable are your periods?</legend><div className="regularity-options">
-            {(['Regular', 'Varies a little', 'Irregular'] as const).map((option) => <button className={regularity === option ? 'selected' : ''} key={option} onClick={() => setRegularity(option)} type="button">{option}</button>)}
+          <h1>{copy.usualPattern}</h1><p>{copy.patternHelp}</p>
+          <label>{copy.periodsLast} <strong>{periodLength} {copy.days}</strong><input className="progress-range" max="10" min="1" onChange={(event) => setPeriodLength(Number(event.target.value))} type="range" value={periodLength} /></label>
+          <label>{copy.cycleLength} <strong>{defaultCycle} {copy.days}</strong><input className="progress-range" max="45" min="20" onChange={(event) => setDefaultCycle(Number(event.target.value))} type="range" value={defaultCycle} /></label>
+          <fieldset><legend>{copy.predictable}</legend><div className="regularity-options">
+            {(['Regular', 'Varies a little', 'Irregular'] as const).map((option) => <button className={regularity === option ? 'selected' : ''} key={option} onClick={() => setRegularity(option)} type="button">{option === 'Regular' ? copy.regular : option === 'Irregular' ? copy.irregular : copy.varies}</button>)}
           </div></fieldset>
-          <div className="onboarding-actions"><button onClick={() => setStep(2)} type="button">Back</button><button type="submit">See my insights</button></div>
+          <div className="onboarding-actions"><button onClick={() => setStep(2)} type="button">{t('back')}</button><button type="submit">{copy.insights}</button></div>
         </form>
       )}
-      <small className="onboarding-privacy">Your cycle data stays on this device. Predictions are estimates and are not birth-control advice.</small>
+      <small className="onboarding-privacy">{copy.cyclePrivacy}</small>
     </div>
   );
 }
