@@ -1,4 +1,5 @@
 import type { SmartTask } from '../lib/tasks';
+import { useI18n } from '../lib/i18n';
 
 type Props = {
   task?: SmartTask;
@@ -10,11 +11,12 @@ type Props = {
 };
 
 export function DashboardPriorityCard({ task, priorityWins, poem, labels, dayLabel, onOptions }: Props) {
+  const { t } = useI18n();
   if (!task) return (
     <section className="priority-card empty-priority">
       <span className="priority-label">{labels.topPriority}</span>
-      <h2>No priority yet</h2>
-      <p>Add a task to start planning your day.</p>
+      <h2>{t('noPriority')}</h2>
+      <p>{t('addPriorityTask')}</p>
     </section>
   );
 
