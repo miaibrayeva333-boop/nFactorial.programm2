@@ -62,7 +62,7 @@ export function DailyTrackers({ dateKey }: { dateKey: string }) {
         <Metric icon="◒" value={`${metrics.water} / 8`} label={t('water')} tapLabel={t('tapUpdate')} tone="blue" progress={`${metrics.water / 8 * 100}%`} onClick={() => setOpen('water')} />
         <Metric icon="✓" value={`${completed} / ${habitNames.length}`} label={t('habitsDone')} tapLabel={t('tapUpdate')} tone="green" progress={`${habitProgress}%`} onClick={() => setOpen('habits')} />
         <Metric icon="$" value={`$${metrics.budget.toLocaleString()}`} label={t('budgetRemaining')} tapLabel={t('tapUpdate')} tone="orange" onClick={() => setOpen('budget')} />
-        <Metric icon="☺" value={metrics.mood} label={t('todaysMood')} tapLabel={t('tapUpdate')} tone="pink" onClick={() => setOpen('mood')} />
+        <Metric icon="☺" value={metrics.mood === 'Not checked in' ? t('notCheckedIn') : metrics.mood} label={t('todaysMood')} tapLabel={t('tapUpdate')} tone="pink" onClick={() => setOpen('mood')} />
       </div>
       {open && (
         <div className="modal-backdrop" onMouseDown={() => setOpen(null)}>
