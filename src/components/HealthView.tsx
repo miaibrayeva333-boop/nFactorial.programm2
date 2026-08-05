@@ -1,5 +1,6 @@
 import { FormEvent, useMemo, useState } from 'react';
 import { HealthOnboarding, type CycleProfile } from './HealthOnboarding';
+import { localeForLanguage, useI18n, type Language } from '../lib/i18n';
 
 type HealthLog = {
   id: number;
@@ -16,8 +17,19 @@ type HealthLog = {
 const symptomOptions = ['Cramps', 'Headache', 'Bloating', 'Fatigue', 'Back pain', 'Mood changes'];
 const bodyOptions = ['Bloated', 'Crampy', 'Heavy', 'Tender', 'Achy', 'Energetic'];
 const emotionOptions = ['Calm', 'Sensitive', 'Irritable', 'Anxious', 'Low', 'Emotional', 'Confident'];
+const cyclePageCopy: Record<Language, string[]> = {
+  English: ['UNDERSTAND YOUR BODY', 'NEXT PERIOD ESTIMATE', 'Add your first period', 'Estimate based on your', 'day average', 'CURRENT CYCLE', 'Day', 'Avg. cycle', 'Avg. period', 'Day variation', 'Cycles logged', 'Recent check-ins', 'Add check-in', 'Period day', 'Health check-in', 'Pain', 'No symptoms', 'Start a private check-in', 'Track period days, pain, and symptoms.', 'Edit cycle answers'],
+  Русский: ['ПОНИМАЙТЕ СВОЁ ТЕЛО', 'ПРОГНОЗ СЛЕДУЮЩЕЙ МЕНСТРУАЦИИ', 'Добавьте первую менструацию', 'Прогноз на основе среднего цикла:', 'дней', 'ТЕКУЩИЙ ЦИКЛ', 'День', 'Средний цикл', 'Средняя менструация', 'Разница в днях', 'Циклов записано', 'Последние отметки', 'Добавить отметку', 'День менструации', 'Проверка здоровья', 'Боль', 'Нет симптомов', 'Начать личную отметку', 'Отмечайте дни менструации, боль и симптомы.', 'Изменить ответы о цикле'],
+  Қазақша: ['ДЕНЕҢІЗДІ ТҮСІНІҢІЗ', 'КЕЛЕСІ ЕТЕККІР БОЛЖАМЫ', 'Алғашқы етеккірді қосыңыз', 'Орташа циклге негізделген болжам:', 'күн', 'АҒЫМДАҒЫ ЦИКЛ', 'Күн', 'Орташа цикл', 'Орташа етеккір', 'Күн ауытқуы', 'Жазылған циклдер', 'Соңғы белгілеулер', 'Белгілеу қосу', 'Етеккір күні', 'Денсаулық белгілеуі', 'Ауырсыну', 'Белгілер жоқ', 'Жеке белгілеуді бастау', 'Етеккір күндерін, ауырсыну мен белгілерді бақылаңыз.', 'Цикл жауаптарын өзгерту'],
+  Español: ['CONOCE TU CUERPO', 'ESTIMACIÓN DEL PRÓXIMO PERIODO', 'Añade tu primer periodo', 'Estimación basada en tu promedio de', 'días', 'CICLO ACTUAL', 'Día', 'Ciclo medio', 'Periodo medio', 'Variación de días', 'Ciclos registrados', 'Controles recientes', 'Añadir control', 'Día de periodo', 'Control de salud', 'Dolor', 'Sin síntomas', 'Iniciar un control privado', 'Registra días de periodo, dolor y síntomas.', 'Editar respuestas del ciclo'],
+  Français: ['COMPRENEZ VOTRE CORPS', 'ESTIMATION DES PROCHAINES RÈGLES', 'Ajoutez vos premières règles', 'Estimation basée sur votre moyenne de', 'jours', 'CYCLE ACTUEL', 'Jour', 'Cycle moyen', 'Règles moyennes', 'Variation en jours', 'Cycles enregistrés', 'Bilans récents', 'Ajouter un bilan', 'Jour de règles', 'Bilan de santé', 'Douleur', 'Aucun symptôme', 'Commencer un bilan privé', 'Suivez les jours de règles, la douleur et les symptômes.', 'Modifier les réponses du cycle'],
+  Deutsch: ['VERSTEHE DEINEN KÖRPER', 'SCHÄTZUNG DER NÄCHSTEN PERIODE', 'Füge deine erste Periode hinzu', 'Schätzung basierend auf deinem Durchschnitt von', 'Tagen', 'AKTUELLER ZYKLUS', 'Tag', 'Ø Zyklus', 'Ø Periode', 'Tagesabweichung', 'Erfasste Zyklen', 'Letzte Check-ins', 'Check-in hinzufügen', 'Periodentag', 'Gesundheits-Check-in', 'Schmerz', 'Keine Symptome', 'Privaten Check-in starten', 'Erfasse Periodentage, Schmerzen und Symptome.', 'Zyklusantworten bearbeiten'],
+};
 
 export function HealthView() {
+  const { language, t } = useI18n();
+  const c = cyclePageCopy[language];
+  const locale = localeForLanguage(language);
   const [profile, setProfile] = useState<CycleProfile | null>(() => {
     const saved = localStorage.getItem('smart-life-health-profile');
     return saved ? JSON.parse(saved) as CycleProfile : null;
@@ -66,49 +78,47 @@ export function HealthView() {
   return (
     <div className="dashboard health-view">
       <header className="topbar">
-        <div><p className="eyebrow">UNDERSTAND YOUR BODY</p><h1>Health</h1></div>
+        <div><p className="eyebrow">{c[0]}</p><h1>{t('health')}</h1></div>
         <button className="add-button" onClick={() => setEditorOpen(true)} type="button">＋</button>
       </header>
 
       <section className="health-overview">
         <article className="cycle-card">
-          <span className="health-icon">♡</span><p>NEXT PERIOD ESTIMATE</p>
-          <h2>{nextPeriod ? nextPeriod.toLocaleDateString('en', { month: 'long', day: 'numeric' }) : 'Add your first period'}</h2>
-          <small>Estimate based on your {averageCycle}-day average</small>
+          <span className="health-icon">♡</span><p>{c[1]}</p>
+          <h2>{nextPeriod ? nextPeriod.toLocaleDateString(locale, { month: 'long', day: 'numeric' }) : c[2]}</h2>
+          <small>{c[3]} {averageCycle} {c[4]}</small>
         </article>
         <article className="cycle-settings cycle-day-card">
-          <span>CURRENT CYCLE</span><strong>Day {cycleDay}</strong><small>{profile.regularity}</small>
+          <span>{c[5]}</span><strong>{c[6]} {cycleDay}</strong><small>{profile.regularity}</small>
         </article>
       </section>
       <section className="cycle-stats">
-        <div><strong>{averageCycle}</strong><span>Avg. cycle</span></div>
-        <div><strong>{profile.periodLength}</strong><span>Avg. period</span></div>
-        <div><strong>±{variability}</strong><span>Day variation</span></div>
-        <div><strong>{periodStarts.length}</strong><span>Cycles logged</span></div>
+        <div><strong>{averageCycle}</strong><span>{c[7]}</span></div><div><strong>{profile.periodLength}</strong><span>{c[8]}</span></div>
+        <div><strong>±{variability}</strong><span>{c[9]}</span></div><div><strong>{periodStarts.length}</strong><span>{c[10]}</span></div>
       </section>
 
-      <div className="section-title health-title"><h2>Recent check-ins</h2><button onClick={() => setEditorOpen(true)} type="button">Add check-in</button></div>
+      <div className="section-title health-title"><h2>{c[11]}</h2><button onClick={() => setEditorOpen(true)} type="button">{c[12]}</button></div>
       {logs.length ? (
         <section className="health-log-list">
           {[...logs].sort((a, b) => b.date.localeCompare(a.date)).map((log) => (
             <article className="health-log" key={log.id}>
               <div className={log.period ? 'health-date period' : 'health-date'}>
                 <strong>{new Date(`${log.date}T12:00:00`).getDate()}</strong>
-                <small>{new Date(`${log.date}T12:00:00`).toLocaleDateString('en', { month: 'short' })}</small>
+                <small>{new Date(`${log.date}T12:00:00`).toLocaleDateString(locale, { month: 'short' })}</small>
               </div>
               <div>
-                <h3>{log.period ? 'Period day' : 'Health check-in'} · Pain {log.pain}/10</h3>
-                <p>{[...(log.bodyFeelings ?? []), ...(log.emotions ?? []), ...log.symptoms].join(' · ') || 'No symptoms'}{log.notes ? ` — ${log.notes}` : ''}</p>
+                <h3>{log.period ? c[13] : c[14]} · {c[15]} {log.pain}/10</h3>
+                <p>{[...(log.bodyFeelings ?? []), ...(log.emotions ?? []), ...log.symptoms].join(' · ') || c[16]}{log.notes ? ` — ${log.notes}` : ''}</p>
               </div>
               <button aria-label="Delete health entry" onClick={() => save(logs.filter((item) => item.id !== log.id))} type="button">×</button>
             </article>
           ))}
         </section>
       ) : (
-        <button className="empty-health" onClick={() => setEditorOpen(true)} type="button"><span>♡</span><strong>Start a private check-in</strong><small>Track period days, pain, and symptoms.</small></button>
+        <button className="empty-health" onClick={() => setEditorOpen(true)} type="button"><span>♡</span><strong>{c[17]}</strong><small>{c[18]}</small></button>
       )}
       <p className="health-note">This tracker provides estimates only and is not medical advice. Seek medical care for severe or unusual pain.</p>
-      <button className="reset-cycle-profile" onClick={() => { localStorage.removeItem('smart-life-health-profile'); setProfile(null); }} type="button">Edit cycle answers</button>
+      <button className="reset-cycle-profile" onClick={() => { localStorage.removeItem('smart-life-health-profile'); setProfile(null); }} type="button">{c[19]}</button>
       {editorOpen && <HealthEditor onClose={() => setEditorOpen(false)} onSave={(log) => { save([...logs, log]); setEditorOpen(false); }} />}
     </div>
   );
